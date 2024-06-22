@@ -91,18 +91,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
+
 CORS_ALLOW_ALL_ORIGINS=True
 CORS_ALLOW_CREDENTIALS=True
+CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
+    "https://flickz-one.vercel.app",
 ]
 CORS_ALLOWED_ORIGINS = [
-     "http://localhost:3000",
-     "http://localhost:8000",
-     "http://localhost:5173",
-
-    
+    "http://localhost:3000",
+    "http://localhost:8000",
+    "http://localhost:5173",
+    "https://flickz-one.vercel.app",
 ]
 
 

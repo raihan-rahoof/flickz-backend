@@ -7,7 +7,8 @@ from .views import (
     TheatreRegisterView,
     TheatreMovieSelectView,
     TheatreShowAddView,
-    AvailableShows
+    AvailableShows,
+    ShowDeleteView
 )
 
 urlpatterns = [
@@ -22,6 +23,7 @@ urlpatterns = [
     path(
         "movies/<int:movie_id>/available-shows/",
         AvailableShows.as_view(),
-        name="available-shows"
+        name="available-shows",
     ),
+    path("shows/<int:pk>/", ShowDeleteView.as_view(), name="delete-show"),
 ]

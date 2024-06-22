@@ -9,13 +9,12 @@ from datetime import date
 
 from .models import OneTimePasswordTheatre, Theatre,Shows
 from .serializers import (
-
     TheatreLoginSerializer,
     TheatreRegistrationSerializer,
     ShowMovieSerializer,
     ShowCreateSerializer,
-    ShowListSerializer
-    
+    ShowListSerializer,
+    ShowSerializer,
 )
 from adminside.models import Movie
 
@@ -99,6 +98,19 @@ class TheatreMovieSelectView(generics.ListAPIView):
     queryset = Movie.objects.all()
     serializer_class = ShowMovieSerializer
     permission_classes = [IsAuthenticated]
+
+
+class ShowDeleteView(generics.DestroyAPIView):
+    queryset = Shows.objects.all()
+    serializer_class = ShowSerializer
+
+    def delete(self, request, *args, **kwargs):
+        try:
+            show = self.get_object()
+            show.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # ------------- user side available shows ----------------------

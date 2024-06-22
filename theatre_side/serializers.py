@@ -153,5 +153,9 @@ class ShowListSerializer(serializers.ModelSerializer):
         except Theatre.DoesNotExist:
             return None
 
+class ShowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Shows
+        fields = '__all__'
 
 # -------------- Shows Available Theatres List ------------------
