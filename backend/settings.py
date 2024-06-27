@@ -21,7 +21,8 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = ["*", "http://localhost:3000", "13.53.133.66"]
+
+ALLOWED_HOSTS = ["13.53.133.66", "localhost"]
 
 AUTH_USER_MODEL = "user_auth.User"
 
@@ -94,22 +95,20 @@ WSGI_APPLICATION = "backend.wsgi.application"
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_CREDENTIALS = True
+
+
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:5173",
     "https://flickz.onrender.com",
     "https://13.53.133.66",
 ]
+
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
     "https://13.53.133.66",
-    "http://13.53.133.66",
     "http://localhost:5173",
     "https://flickz.onrender.com",
 ]
 
-CSRF_ALLOWED_ORIGINS = ["https://13.53.133.66"]
+
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -210,4 +209,4 @@ CELERY_TIMEZONE = "UTC"
 
 STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
 STRIPE_PUBLISHABLE_KEY = env("STRIPE_PUBLISHABLE_KEY")
-FRONTEND_URL = "http://localhost:5173"
+FRONTEND_URL = "https://flickz.onrender.com"
