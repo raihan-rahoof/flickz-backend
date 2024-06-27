@@ -18,4 +18,4 @@ application = ProtocolTypeRouter(
     }
 )
 
-application = WhiteNoise(application, root="/home/ubuntu/flickz-backend/staticfiles")
+
