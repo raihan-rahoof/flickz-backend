@@ -54,7 +54,11 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [
+                (
+                    "rediss://red-cpuhp15ds78s73dt3rn0:uh2fG2tjW2ZToiucjq0tuRTO4evdnF2n@oregon-redis.render.com:6379"
+                )
+            ],
         },
     },
 }
@@ -107,7 +111,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://flickz.onrender.com",
 ]
-
 
 
 # Database
