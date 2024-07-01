@@ -22,7 +22,7 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
 
 
-ALLOWED_HOSTS = ["13.53.133.66", "localhost"]
+ALLOWED_HOSTS = ["13.53.133.66", "localhost", "flickz-backend.duckdns.org"]
 
 AUTH_USER_MODEL = "user_auth.User"
 
@@ -104,12 +104,14 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     "https://flickz.onrender.com",
     "https://13.53.133.66",
+    "https://flickz-backend.duckdns.org",
 ]
 
 CORS_ALLOWED_ORIGINS = [
     "https://13.53.133.66",
     "http://localhost:5173",
     "https://flickz.onrender.com",
+    "https://flickz-backend.duckdns.org",
 ]
 
 
