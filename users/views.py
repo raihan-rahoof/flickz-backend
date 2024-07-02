@@ -27,26 +27,3 @@ class MovieSearchView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response([], status=status.HTTP_200_OK)
 
-class ProfileMobileVerificationHandle(APIView):
-    def post(self,request):
-        serializer = MobileVerificaitonSerializer(data=request.data)
-        if serializer.is_valid():
-            try:
-                user = User.objects.get(id=request.user)
-                profile = UserProfile.objects.get(user=user)
-
-                profile.is_mobile_verified=True
-                profile.save()
-                profile_serializer = MobileVerificaitonSerializer(profile)
-
-                return Response(
-                    {
-                        "message": "Mobile number verified successfully",
-                        "user_profile": profile_serializer.data,
-                    },
-                    status=status.HTTP_200_OK,
-                )
-            except User.DoesNotExist:
-                return Response({'error':"user not found"},status=status.HTTP_404_NOT_FOUND)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

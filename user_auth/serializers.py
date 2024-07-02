@@ -210,3 +210,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return instance
 
 
+class MobileVerificaitonSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ["is_mobile_verified"]
