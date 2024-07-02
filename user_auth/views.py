@@ -188,7 +188,7 @@ class ProfileMobileVerificationHandle(APIView):
         serializer = MobileVerificaitonSerializer(data=request.data)
         if serializer.is_valid():
             try:
-                user = User.objects.get(id=request.user)
+                user = User.objects.get(id=request.user.id)
                 profile = UserProfile.objects.get(user=user)
 
                 profile.is_mobile_verified = True
