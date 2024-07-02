@@ -1,6 +1,6 @@
 from rest_framework.generics import ListAPIView , RetrieveAPIView
 from adminside.models import Movie
-from .serializers import MovieSerializer,MobileVerificaitonSerializer
+from .serializers import MovieSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
