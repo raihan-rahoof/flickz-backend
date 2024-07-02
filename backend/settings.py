@@ -22,7 +22,11 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
 
 
-ALLOWED_HOSTS = ["flickz-backend.duckdns.org" ,"13.53.133.66", "localhost"]
+ALLOWED_HOSTS = [
+    "flickz-backend.duckdns.org",
+    "13.53.133.66",
+    "localhost",
+]
 
 AUTH_USER_MODEL = "user_auth.User"
 

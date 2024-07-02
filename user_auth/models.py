@@ -97,6 +97,8 @@ class UserProfile(models.Model):
         _("User Image"), upload_to="profile/", blank=True, null=True
     )
 
+    is_mobile_verified = models.BooleanField(default=False)
+
     def __str__(self) -> str:
         return f"{self.user.email} 's Profile"
 

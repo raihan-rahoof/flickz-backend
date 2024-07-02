@@ -1,11 +1,12 @@
 from rest_framework.generics import ListAPIView , RetrieveAPIView
 from adminside.models import Movie
-from .serializers import MovieSerializer
+from .serializers import MovieSerializer,MobileVerificaitonSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from adminside.models import Movie
 from adminside.serializers import MovieSerializer
+from user_auth.models import UserProfile,User
 
 # Create your views here.
 
@@ -25,3 +26,18 @@ class MovieSearchView(APIView):
             serializer = MovieSerializer(movies, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response([], status=status.HTTP_200_OK)
+
+class ProfileMobileVerificationHandle(APIView):
+    def post(self,request):
+        serializer = MobileVerificaitonSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                user = User.objects.get(id=request.user)
+                profile = UserProfile.objects.get(user=user)
+
+                profile.is_mobile_verified=True
+                profile.save()
+            except User.DoesNotExist:
+                return Response({'error':"user not found"},status=status.HTTP_404_NOT_FOUND)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
