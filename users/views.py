@@ -37,6 +37,15 @@ class ProfileMobileVerificationHandle(APIView):
 
                 profile.is_mobile_verified=True
                 profile.save()
+                profile_serializer = MobileVerificaitonSerializer(profile)
+
+                return Response(
+                    {
+                        "message": "Mobile number verified successfully",
+                        "user_profile": profile_serializer.data,
+                    },
+                    status=status.HTTP_200_OK,
+                )
             except User.DoesNotExist:
                 return Response({'error':"user not found"},status=status.HTTP_404_NOT_FOUND)
 
