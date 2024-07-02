@@ -12,6 +12,7 @@ from .views import (
     UserProfileView,
     UserRegisterView,
     VerifyUserEmail,
+    ProfileMobileVerificationHandle
 )
 
 urlpatterns = [
@@ -29,4 +30,9 @@ urlpatterns = [
     path("set-new-password/", SetNewPasswordView.as_view(), name="set-new-password"),
     path("logout/", LogoutApiView.as_view(), name="logout"),
     path("user-profile/", UserProfileView.as_view(), name="userprofile"),
+    path(
+        "user-profile/verify-mobile/",
+        ProfileMobileVerificationHandle.as_view(),
+        name="verify-mobile",
+    ),
 ]

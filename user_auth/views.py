@@ -12,6 +12,7 @@ from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+
 from .models import OneTimePassword, User, UserProfile
 from .serializers import (
     LoginSerializer,
@@ -20,6 +21,7 @@ from .serializers import (
     SetNewPasswordSerializer,
     UserProfileSerializer,
     UserRegisterSerializer,
+    MobileVerificaitonSerializer,
 )
 from .utils import send_generated_otp_to_email
 
@@ -179,3 +181,30 @@ class UserProfileView(RetrieveUpdateAPIView):
                 {"error": "Userprofile Does not exists"},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+
+class ProfileMobileVerificationHandle(APIView):
+    def post(self, request):
+        serializer = MobileVerificaitonSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                user = User.objects.get(id=request.user)
+                profile = UserProfile.objects.get(user=user)
+
+                profile.is_mobile_verified = True
+                profile.save()
+                profile_serializer = MobileVerificaitonSerializer(profile)
+
+                return Response(
+                    {
+                        "message": "Mobile number verified successfully",
+                        "user_profile": profile_serializer.data,
+                    },
+                    status=status.HTTP_200_OK,
+                )
+            except User.DoesNotExist:
+                return Response(
+                    {"error": "user not found"}, status=status.HTTP_404_NOT_FOUND
+                )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

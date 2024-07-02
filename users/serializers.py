@@ -8,7 +8,3 @@ class MovieSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class MobileVerificaitonSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserProfile
-        fields = ["is_mobile_verified"]
