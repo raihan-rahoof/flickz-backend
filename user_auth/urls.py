@@ -31,7 +31,7 @@ urlpatterns = [
     path("logout/", LogoutApiView.as_view(), name="logout"),
     path("user-profile/", UserProfileView.as_view(), name="userprofile"),
     path(
-        "user-profile/verify-mobile/",
+        "verify-mobile/",
         ProfileMobileVerificationHandle.as_view(),
         name="verify-mobile",
     ),
