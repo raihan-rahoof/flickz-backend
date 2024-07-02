@@ -11,7 +11,7 @@ from rest_framework import status
 from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
+from rest_framework.views import APIView
 
 from .models import OneTimePassword, User, UserProfile
 from .serializers import (
@@ -184,7 +184,7 @@ class UserProfileView(RetrieveUpdateAPIView):
 
 
 class ProfileMobileVerificationHandle(APIView):
-    def post(self, request):
+    def patch(self, request):
         serializer = MobileVerificaitonSerializer(data=request.data)
         if serializer.is_valid():
             try:
