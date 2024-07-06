@@ -119,7 +119,7 @@ class PasswordResetRequestSerializer(serializers.Serializer):
             relative_link = reverse(
                 "reset-password-confirm", kwargs={"uidb64": uidb64, "token": token}
             )
-            abslink = f"http://{current_site}{relative_link}"
+            abslink = f"https://{current_site}{relative_link}"
             print(abslink)
             email_body = f"Hi {user.first_name} use the link below to reset your password {abslink}"
             data = {
