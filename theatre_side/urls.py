@@ -8,7 +8,8 @@ from .views import (
     TheatreMovieSelectView,
     TheatreShowAddView,
     AvailableShows,
-    ShowDeleteView
+    ShowDeleteView,
+    ShowDetailView,
 )
 
 urlpatterns = [
@@ -26,4 +27,5 @@ urlpatterns = [
         name="available-shows",
     ),
     path("shows/<int:pk>/", ShowDeleteView.as_view(), name="delete-show"),
+    path("show/details/<int:show_id>/", ShowDetailView.as_view(), name="show-details"),
 ]

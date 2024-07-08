@@ -15,6 +15,7 @@ from .serializers import (
     ShowCreateSerializer,
     ShowListSerializer,
     ShowSerializer,
+    ShowDetailSerialiser,
 )
 from adminside.models import Movie
 
@@ -125,4 +126,15 @@ class AvailableShows(APIView):
         today = timezone.now().date()
         shows = Shows.objects.filter(movie=movie,date__date__gte=today)
         serializer = ShowListSerializer(shows,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
+class ShowDetailView(APIView):
+
+    def get(self,request,show_id):
+        try:
+            show = Shows.objects.prefetch_related('bookings').get(id=show_id)
+        except Shows.DoesNotExist:
+            return Response({'error':'shows not found'},status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ShowDetailSerialiser(show)
         return Response(serializer.data,status=status.HTTP_200_OK)

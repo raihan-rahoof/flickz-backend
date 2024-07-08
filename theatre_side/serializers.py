@@ -7,6 +7,7 @@ from theatre_screen.serializers import ScreenSerializer
 from user_auth.models import User
 from adminside.serializers import ThatreListSerializer
 from .models import Shows, Theatre
+from bookings.models import Bookings
 
 
 class TheatreRegistrationSerializer(serializers.ModelSerializer):
@@ -159,3 +160,46 @@ class ShowSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 # -------------- Shows Available Theatres List ------------------
+class UserSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id','first_name','email']
+
+class BookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bookings
+        fields = ["id", "user", "seats", "seat_number", "total_price", "payment_status"]
+
+class ShowDetailSerialiser(serializers.ModelSerializer):
+    bookings=BookingSerializer(many=True)
+    total_revenue = serializers.SerializerMethodField()
+    tickets_sold = serializers.SerializerMethodField()
+    remaining_tickets = serializers.SerializerMethodField()
+    booked_users = serializers.SerializerMethodField()
+
+    class Meta:
+        model=Shows
+        fields = [
+            "id",
+            "show_name",
+            "movie",
+            "screen",
+            "theatre",
+            "date",
+            "start_time",
+            "end_time",
+            "total_revenue",
+            "tickets_sold",
+            "remaining_tickets",
+            "booked_users",
+            "bookings",
+        ]
+
+    def get_total_revenue(self,obj):
+        return sum(booking.total_price for booking in obj.bookings.all() )
+    
+    def get_tickets_sold(self,obj):
+        return sum(len(booking.seats) for booking in obj.bookings.all())
+    
+    
+        
