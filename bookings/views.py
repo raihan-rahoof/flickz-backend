@@ -113,10 +113,10 @@ class PaymentCancelView(APIView):
 
 #----------------- Booking details ------------------------------------
     
-class TicketsListView(generics.ListAPIView):
+class TicketsListView(APIView):
     permission_classes=[IsAuthenticated]
-    serializer_class = BookingSerializer
 
-    def get_queryset(self):
-        return Bookings.objects.filter(user=self.request.user)
-    
+    def get(self,request):
+        tickets=Bookings.objects.filter(user=request.user)
+        serializer = BookingSerializer(tickets,many=True)
+        return Response(serializer.data)
