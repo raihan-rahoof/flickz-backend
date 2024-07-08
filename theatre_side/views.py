@@ -6,6 +6,7 @@ from .utils import send_generated_otp_to_email
 from rest_framework.views import APIView
 from django.utils import timezone
 from datetime import date
+from bookings.models import Bookings
 
 from .models import OneTimePasswordTheatre, Theatre,Shows
 from .serializers import (
@@ -132,7 +133,7 @@ class ShowDetailView(APIView):
 
     def get(self,request,show_id):
         try:
-            show = Shows.objects.prefetch_related('bookings').get(id=show_id)
+            show = Shows.objects.prefetch_related(Bookings).get(id=show_id)
         except Shows.DoesNotExist:
             return Response({'error':'shows not found'},status=status.HTTP_404_NOT_FOUND)
 
