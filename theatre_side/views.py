@@ -133,7 +133,7 @@ class ShowDetailView(APIView):
 
     def get(self,request,show_id):
         try:
-            show = Shows.objects.prefetch_related(Bookings).get(id=show_id)
+            show = Shows.objects.prefetch_related().get(id=show_id)
         except Shows.DoesNotExist:
             return Response({'error':'shows not found'},status=status.HTTP_404_NOT_FOUND)
 

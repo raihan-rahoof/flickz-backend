@@ -4,7 +4,7 @@ from user_auth.models import User
 
 # Create your models here.
 class Bookings(models.Model):
-    show = models.ForeignKey(Shows,on_delete=models.CASCADE)
+    show = models.ForeignKey(Shows,on_delete=models.CASCADE,related_name='bookings')
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     seats = models.JSONField(default=list)
     seat_number = models.JSONField(default=list)
