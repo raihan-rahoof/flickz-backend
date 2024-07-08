@@ -189,8 +189,6 @@ class ShowDetailSerialiser(serializers.ModelSerializer):
             "end_time",
             "total_revenue",
             "tickets_sold",
-            "remaining_tickets",
-            "booked_users",
             "bookings",
         ]
 
