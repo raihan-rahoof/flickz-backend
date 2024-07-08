@@ -114,6 +114,9 @@ class PaymentCancelView(APIView):
 #----------------- Booking details ------------------------------------
     
 class TicketsListView(generics.ListAPIView):
-    queryset = Bookings.objects.all().exclude(payment_status='Pending')
-    permission_classes = [IsAuthenticated]
+    permission_classes=[IsAuthenticated]
     serializer_class = BookingSerializer
+
+    def get_queryset(self):
+        return Bookings.objects.filter(user=self.request.user)
+    
