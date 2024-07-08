@@ -174,8 +174,7 @@ class ShowDetailSerialiser(serializers.ModelSerializer):
     bookings=BookingSerializer(many=True)
     total_revenue = serializers.SerializerMethodField()
     tickets_sold = serializers.SerializerMethodField()
-    remaining_tickets = serializers.SerializerMethodField()
-    booked_users = serializers.SerializerMethodField()
+    
 
     class Meta:
         model=Shows
