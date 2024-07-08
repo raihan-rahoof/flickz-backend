@@ -118,8 +118,7 @@ class TicketsListView(APIView):
 
     def get(self,request):
         try:
-            user = User.objects.get(id=request.user)
-            tickets=Bookings.objects.filter(user=user)
+            tickets=Bookings.objects.filter(user=request.user.id)
             serializer = BookingSerializer(tickets,many=True)
             return Response(serializer.data)
         except User.DoesNotExist:
