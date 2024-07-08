@@ -8,7 +8,7 @@ from theatre_screen.models import Seat,Section , ShowSeatReservation
 from theatre_side.models import Shows 
 from .serializers import BookingSerializer
 from rest_framework import generics
-
+from user_auth.models import User
 from .models import Bookings
 
 # Create your views here.
@@ -117,6 +117,10 @@ class TicketsListView(APIView):
     permission_classes=[IsAuthenticated]
 
     def get(self,request):
-        tickets=Bookings.objects.filter(user=request.user)
-        serializer = BookingSerializer(tickets,many=True)
-        return Response(serializer.data)
+        try:
+            user = User.objects.get(id=request.user)
+            tickets=Bookings.objects.filter(user=user)
+            serializer = BookingSerializer(tickets,many=True)
+            return Response(serializer.data)
+        except User.DoesNotExist:
+            return Response({'error':'user or booking not available'},status=status.HTTP_404_NOT_FOUND)
