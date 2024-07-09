@@ -159,47 +159,45 @@ class ShowSerializer(serializers.ModelSerializer):
         model = Shows
         fields = '__all__'
 
-# -------------- Shows Available Theatres List ------------------
-class UserSerializers(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id','first_name','email']
+# -------------- Show Managment Serialiser ------------------
+
+
+class UserSerializer(serializers.ModelSerializer):
+    model = User
+    fields = ["id", "first_name", "last_name", "email", "phone"]
+
 
 class BookingSerializer(serializers.ModelSerializer):
-    user= UserSerializers()
+    user = UserSerializer()
+
     class Meta:
         model = Bookings
         fields = ["id", "user", "seats", "seat_number", "total_price", "payment_status"]
 
 class ShowDetailSerialiser(serializers.ModelSerializer):
     bookings=BookingSerializer(many=True)
-    total_revenue = serializers.SerializerMethodField()
-    tickets_sold = serializers.SerializerMethodField()
-    
+    movie = ShowMovieSerializer()
+    screen = ScreenSerializer()
+    theatre_details = serializers.SerializerMethodField()
 
     class Meta:
-        model=Shows
+        model = Shows
         fields = [
             "id",
             "show_name",
             "movie",
             "screen",
             "theatre",
+            "theatre_details",
             "date",
             "start_time",
             "end_time",
-            "total_revenue",
-            "tickets_sold",
             "bookings",
         ]
 
-    def get_total_revenue(self,obj):
-        return sum(booking.total_price for booking in obj.bookings.all() )
-    
-    def get_tickets_sold(self,obj):
-        return sum(len(booking.seats) for booking in obj.bookings.all())
-    
-    def get_booked_users(self,obj):
-        users = {booking.user.id: booking.user for booking in obj.objects.all()}
-        return UserSerializers(users.values(),many=True).data
-    
+    def get_theatre_details(self, obj):
+        try:
+            theatre = Theatre.objects.get(user=obj.theatre)
+            return TheatreSerializer(theatre).data
+        except Theatre.DoesNotExist:
+            return None

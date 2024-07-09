@@ -17,6 +17,7 @@ from .serializers import (
     ShowListSerializer,
     ShowSerializer,
     ShowDetailSerialiser,
+    UserSerializer
 )
 from adminside.models import Movie
 
@@ -136,6 +137,16 @@ class ShowDetailView(APIView):
             show = Shows.objects.prefetch_related('bookings').get(id=show_id)
         except Shows.DoesNotExist:
             return Response({'error':'shows not found'},status=status.HTTP_404_NOT_FOUND)
+        
+        total_revenue = sum(booking.total_price for booking in show.bookings.all())
+        tickets_sold = sum(len(booking.seats) for booking in show.bookings.all())
+        bookings = show.bookings.all()
+        booked_users = UserSerializer([booking.user for booking in bookings],many=True)
 
         serializer = ShowDetailSerialiser(show)
-        return Response(serializer.data,status=status.HTTP_200_OK)
+        data = serializer.data
+        data['total_revenue']=total_revenue
+        data['tickets_sold']=tickets_sold
+        data['booked_users']=booked_users
+
+        return Response(data,status=status.HTTP_200_OK)
