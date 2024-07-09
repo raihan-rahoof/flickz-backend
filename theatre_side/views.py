@@ -124,30 +124,28 @@ class AvailableShows(APIView):
         except Movie.DoesNotExist:
             return Response({'error':'Movie doesnt exists'},status=status.HTTP_404_NOT_FOUND)
 
-
         today = timezone.now().date()
         shows = Shows.objects.filter(movie=movie,date__date__gte=today)
         serializer = ShowListSerializer(shows,many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
 
-class ShowDetailView(APIView):
 
-    def get(self,request,show_id):
+class ShowDetailView(APIView):
+    def get(self, request, show_id):
         try:
-            show = Shows.objects.prefetch_related('bookings').get(id=show_id)
+            show = Shows.objects.prefetch_related("bookings").get(id=show_id)
         except Shows.DoesNotExist:
-            return Response({'error':'shows not found'},status=status.HTTP_404_NOT_FOUND)
-        
+            return Response(
+                {"error": "Show not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
         total_revenue = sum(booking.total_price for booking in show.bookings.all())
         tickets_sold = sum(len(booking.seats) for booking in show.bookings.all())
         bookings = show.bookings.all()
-        booked_users = [booking.user for booking in bookings]
-        serialized_users = UserSerializer(booked_users,many=True).data
 
         serializer = ShowDetailSerialiser(show)
         data = serializer.data
-        data['total_revenue']=total_revenue
-        data['tickets_sold']=tickets_sold
-        data['booked_users']=serialized_users
+        data["total_revenue"] = total_revenue
+        data["tickets_sold"] = tickets_sold
 
-        return Response(data,status=status.HTTP_200_OK)
+        return Response(data, status=status.HTTP_200_OK)
