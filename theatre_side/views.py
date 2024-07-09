@@ -148,6 +148,6 @@ class ShowDetailView(APIView):
         data = serializer.data
         data['total_revenue']=total_revenue
         data['tickets_sold']=tickets_sold
-        data['booked_users']=booked_users
+        data['booked_users']=serialized_users
 
         return Response(data,status=status.HTTP_200_OK)
