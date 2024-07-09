@@ -163,8 +163,9 @@ class ShowSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    model = User
-    fields = ["id", "first_name", "last_name", "email", "phone"]
+    class Meta:
+        model = User
+        fields = ["id", "first_name", "last_name", "email", "phone"]
 
 
 class BookingSerializer(serializers.ModelSerializer):
