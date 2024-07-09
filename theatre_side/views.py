@@ -141,7 +141,8 @@ class ShowDetailView(APIView):
         total_revenue = sum(booking.total_price for booking in show.bookings.all())
         tickets_sold = sum(len(booking.seats) for booking in show.bookings.all())
         bookings = show.bookings.all()
-        booked_users = UserSerializer([booking.user for booking in bookings],many=True)
+        booked_users = [booking.user for booking in bookings]
+        serialized_users = UserSerializer(booked_users,many=True).data
 
         serializer = ShowDetailSerialiser(show)
         data = serializer.data
