@@ -168,7 +168,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class BookingSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    user = UserSerializer(many=True)
 
     class Meta:
         model = Bookings
