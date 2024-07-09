@@ -198,5 +198,8 @@ class ShowDetailSerialiser(serializers.ModelSerializer):
     def get_tickets_sold(self,obj):
         return sum(len(booking.seats) for booking in obj.bookings.all())
     
+    def get_booked_users(self,obj):
+        users = {booking.user.id: booking.user for booking in obj.objects.all()}
+        return UserSerializers(users.values(),many=True).data
     
-        
+    
