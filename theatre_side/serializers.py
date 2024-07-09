@@ -166,6 +166,7 @@ class UserSerializers(serializers.ModelSerializer):
         fields = ['id','first_name','email']
 
 class BookingSerializer(serializers.ModelSerializer):
+    user= UserSerializers()
     class Meta:
         model = Bookings
         fields = ["id", "user", "seats", "seat_number", "total_price", "payment_status"]
@@ -201,5 +202,4 @@ class ShowDetailSerialiser(serializers.ModelSerializer):
     def get_booked_users(self,obj):
         users = {booking.user.id: booking.user for booking in obj.objects.all()}
         return UserSerializers(users.values(),many=True).data
-    
     
