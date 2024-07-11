@@ -151,7 +151,8 @@ class HandleOfflineBookingView(APIView):
             # Mark seats as reserved
             for seat_id in booking.seats:
                 try:
-                    seat = ShowSeatReservation.objects.get_or_create(seat=seat_id)
+                    instance = Seat.objects.get(id=seat_id)
+                    seat = ShowSeatReservation.objects.get_or_create(seat=instance)
                     seat.show = show
                     seat.is_reserved = True
                     seat.save()
