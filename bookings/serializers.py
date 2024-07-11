@@ -18,6 +18,7 @@ class BookingSerializer(serializers.ModelSerializer):
         ]
 
 class OfflineBookingSerializer(serializers.ModelSerializer):
+    show = ShowListSerializer()
     class Meta:
         model = OfflineBookings
         fields = '__all__'
