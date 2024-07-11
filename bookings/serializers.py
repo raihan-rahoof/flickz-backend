@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Bookings
+from .models import Bookings,OfflineBookings
 from theatre_side.serializers import ShowListSerializer
 
 class BookingSerializer(serializers.ModelSerializer):
@@ -19,5 +19,5 @@ class BookingSerializer(serializers.ModelSerializer):
 
 class OfflineBookingSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Bookings
+        model = OfflineBookings
         fields = '__all__'
