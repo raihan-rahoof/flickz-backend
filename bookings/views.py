@@ -112,23 +112,37 @@ class PaymentCancelView(APIView):
         return Response({"status": "Payment Canceled"}, status=status.HTTP_200_OK)
 
 
-class HandlOfflineBookingView(APIView):
-    permission_classes=[IsAuthenticated]
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import get_object_or_404
+from .models import OfflineBookings, Shows
+from .serializers import OfflineBookingSerializer
 
-    def post(self,request,*args,**kwargs):
 
+class HandleOfflineBookingView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
         serializer = OfflineBookingSerializer(data=request.data)
 
         if serializer.is_valid(raise_exception=True):
-            show_id = request.data.get('show_id')
-            seats = request.data.get('seats')
-            seat_nums = request.data.get('seat_nums')
-            name = request.data.get('name')
-            phone = request.data.get('phone')
-            email = request.data.get('email')
-            total_price = request.data.get('total_price')
+            show_id = request.data.get("show_id")
+            seats = request.data.get("seats")
+            seat_nums = request.data.get("seat_nums")
+            name = request.data.get("name")
+            phone = request.data.get("phone")
+            email = request.data.get("email")
+            total_price = request.data.get("total_price")
 
-            show = Shows.objects.get(id=show_id)
+            try:
+                show = Shows.objects.get(id=show_id)
+            except Shows.DoesNotExist:
+                return Response(
+                    {"error": f"Show with id={show_id} does not exist."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
 
             booking = OfflineBookings.objects.create(
                 show=show,
@@ -143,15 +157,19 @@ class HandlOfflineBookingView(APIView):
 
             booking.save()
 
+            # Mark seats as reserved
             for seat_id in booking.seats:
                 try:
                     seat = ShowSeatReservation.objects.get(seat=seat_id)
                     seat.is_reserved = True
                     seat.save()
-                except Seat.DoesNotExist:
+                except ShowSeatReservation.DoesNotExist:
                     continue
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 # ----------------- Booking details ------------------------------------
 
