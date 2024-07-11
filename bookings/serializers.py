@@ -21,4 +21,4 @@ class OfflineBookingSerializer(serializers.ModelSerializer):
    
     class Meta:
         model = OfflineBookings
-        fields = '__all__'
+        fields = ['id','name','email','phone','seats','show','seat_number','total_price']

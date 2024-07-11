@@ -122,7 +122,7 @@ class HandleOfflineBookingView(APIView):
         serializer = OfflineBookingSerializer(data=request.data)
 
         if serializer.is_valid(raise_exception=True):
-            show_id = request.data.get("show_id")
+            show_id = request.data.get("show")
             seats = request.data.get("seats")
             seat_nums = request.data.get("seat_nums")
             name = request.data.get("name")
