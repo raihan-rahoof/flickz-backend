@@ -14,3 +14,16 @@ class Bookings(models.Model):
 
     def __str__(self) -> str:
         return f"booking by {self.user} for {self.show.movie.title} on {self.show.date}"
+
+class OfflineBookings(models.Model):
+    show = models.ForeignKey(Shows, on_delete=models.CASCADE, related_name="bookings")
+    seats = models.JSONField(default=list)
+    name = models.CharField(max_length=100)
+    email = models.CharField(max_length=100)
+    phone = models.CharField(max_length=15)
+    seat_number = models.JSONField(default=list)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_status = models.CharField(max_length=50)
+
+    def __str__(self) -> str:
+        return f"offline booking by {self.name} on {self.show}"

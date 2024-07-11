@@ -16,3 +16,8 @@ class BookingSerializer(serializers.ModelSerializer):
             "payment_status",
             "stripe_payment_id",
         ]
+
+class OfflineBookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bookings
+        fields = '__all__'

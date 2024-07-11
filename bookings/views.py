@@ -6,10 +6,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from theatre_screen.models import Seat,Section , ShowSeatReservation
 from theatre_side.models import Shows 
-from .serializers import BookingSerializer
+from .serializers import BookingSerializer,OfflineBookingSerializer
 from rest_framework import generics
 from user_auth.models import User
-from .models import Bookings
+from .models import Bookings , OfflineBookings
+
 
 # Create your views here.
 
@@ -111,8 +112,44 @@ class PaymentCancelView(APIView):
         return Response({"status": "Payment Canceled"}, status=status.HTTP_200_OK)
 
 
-#----------------- Booking details ------------------------------------
-    
+class HandlOfflineBookingView(APIView):
+    permission_classes=[IsAuthenticated]
+
+    def post(self,request,*args,**kwargs):
+
+        serializer = OfflineBookingSerializer(data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            show_id = request.data.get('show_id')
+            seats = request.data.get('seats')
+            seat_nums = request.data.get('seat_nums')
+            user_details = request.data.get('holder_details')
+            total_price = request.data.get('total_price')
+
+            booking = OfflineBookings.objects.create(
+                show = show_id,
+                seats = seats,
+                name = user_details['name'],
+                email = user_details['email'],
+                phone = user_details['phone'],
+                seat_number = seat_nums,
+                total_price = total_price,
+            )
+            booking.payment_status = 'Paid'
+            booking.save()
+
+            for seat_id in booking.seats:
+                try:
+                    seat = ShowSeatReservation.objects.get(seat=seat_id)
+                    seat.is_reserved = True
+                    seat.save()
+                except Seat.DoesNotExist:
+                    continue
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# ----------------- Booking details ------------------------------------
+
 class TicketsListView(APIView):
     permission_classes=[IsAuthenticated]
 
