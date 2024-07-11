@@ -112,9 +112,6 @@ class PaymentCancelView(APIView):
         return Response({"status": "Payment Canceled"}, status=status.HTTP_200_OK)
 
 
-
-
-
 class HandleOfflineBookingView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -158,8 +155,10 @@ class HandleOfflineBookingView(APIView):
                     seat.is_reserved = True
                     seat.save()
                 except ShowSeatReservation.DoesNotExist:
-                    continue
-
+                    return Response(
+                        {"error": "no seat found with this id"},
+                        status=status.HTTP_404_NOT_FOUND,
+                    )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
