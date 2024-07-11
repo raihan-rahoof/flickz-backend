@@ -16,7 +16,7 @@ class Bookings(models.Model):
         return f"booking by {self.user} for {self.show.movie.title} on {self.show.date}"
 
 class OfflineBookings(models.Model):
-    show = models.ForeignKey(Shows, on_delete=models.CASCADE, related_name="bookings")
+    show = models.ForeignKey(Shows, on_delete=models.CASCADE, related_name="offline_bookings")
     seats = models.JSONField(default=list)
     name = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
