@@ -6,7 +6,7 @@ from .utils import send_generated_otp_to_email
 from rest_framework.views import APIView
 from django.utils import timezone
 from datetime import date
-from bookings.models import Bookings
+from bookings.models import Bookings,OfflineBookings
 
 from .models import OneTimePasswordTheatre, Theatre,Shows
 from .serializers import (
@@ -139,12 +139,27 @@ class ShowDetailView(APIView):
                 {"error": "Show not found"}, status=status.HTTP_404_NOT_FOUND
             )
 
-        total_revenue = sum(booking.total_price for booking in show.bookings.all())
-        tickets_sold = sum(len(booking.seats) for booking in show.bookings.all())
-        bookings = show.bookings.all()
+        
+        total_revenue_online = sum(
+            booking.total_price for booking in show.bookings.all()
+        )
+        tickets_sold_online = sum(len(booking.seats) for booking in show.bookings.all())
+
+       
+        offline_bookings = OfflineBookings.objects.filter(show=show)
+        total_revenue_offline = sum(booking.total_price for booking in offline_bookings)
+        tickets_sold_offline = sum(len(booking.seats) for booking in offline_bookings)
+
+       
+        total_revenue = total_revenue_online + total_revenue_offline
+        tickets_sold = tickets_sold_online + tickets_sold_offline
 
         serializer = ShowDetailSerialiser(show)
         data = serializer.data
+        data["total_revenue_online"] = total_revenue_online
+        data["tickets_sold_online"] = tickets_sold_online
+        data["total_revenue_offline"] = total_revenue_offline
+        data["tickets_sold_offline"] = tickets_sold_offline
         data["total_revenue"] = total_revenue
         data["tickets_sold"] = tickets_sold
 
