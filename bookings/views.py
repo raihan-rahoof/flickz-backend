@@ -131,15 +131,16 @@ class HandlOfflineBookingView(APIView):
             show = Shows.objects.get(id=show_id)
 
             booking = OfflineBookings.objects.create(
-                show = show,
-                seats = seats,
-                name = name,
-                email = email,
-                phone = phone,
-                seat_number = seat_nums,
-                total_price = total_price,
+                show=show,
+                seats=seats,
+                name=name,
+                email=email,
+                phone=phone,
+                seat_number=seat_nums,
+                total_price=total_price,
+                payment_status="Paid",
             )
-            booking.payment_status = 'Paid'
+
             booking.save()
 
             for seat_id in booking.seats:
