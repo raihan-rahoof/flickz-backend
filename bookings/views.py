@@ -123,15 +123,17 @@ class HandlOfflineBookingView(APIView):
             show_id = request.data.get('show_id')
             seats = request.data.get('seats')
             seat_nums = request.data.get('seat_nums')
-            user_details = request.data.get('holder_details')
+            name = request.data.get('name')
+            phone = request.data.get('phone')
+            email = request.data.get('email')
             total_price = request.data.get('total_price')
 
             booking = OfflineBookings.objects.create(
                 show = show_id,
                 seats = seats,
-                name = user_details['name'],
-                email = user_details['email'],
-                phone = user_details['phone'],
+                name = name,
+                email = email,
+                phone = phone,
                 seat_number = seat_nums,
                 total_price = total_price,
             )
