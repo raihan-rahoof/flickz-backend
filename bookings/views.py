@@ -128,8 +128,10 @@ class HandlOfflineBookingView(APIView):
             email = request.data.get('email')
             total_price = request.data.get('total_price')
 
+            show = Shows.objects.get(id=show_id)
+
             booking = OfflineBookings.objects.create(
-                show = show_id,
+                show = show,
                 seats = seats,
                 name = name,
                 email = email,
