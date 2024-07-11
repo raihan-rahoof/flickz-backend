@@ -19,7 +19,7 @@ class OfflineBookings(models.Model):
     show = models.ForeignKey(Shows, on_delete=models.CASCADE, related_name="offline_bookings")
     seats = models.JSONField(default=list)
     name = models.CharField(max_length=100)
-    email = models.CharField(max_length=100,null=True,Blank=True)
+    email = models.CharField(max_length=100,null=True,blank=True)
     phone = models.CharField(max_length=15)
     seat_number = models.JSONField(default=list)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
