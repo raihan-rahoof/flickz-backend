@@ -7,7 +7,7 @@ from theatre_screen.serializers import ScreenSerializer
 from user_auth.models import User
 from adminside.serializers import ThatreListSerializer
 from .models import Shows, Theatre
-from bookings.models import Bookings
+from bookings.models import Bookings,OfflineBookings
 
 
 class TheatreRegistrationSerializer(serializers.ModelSerializer):
@@ -202,3 +202,4 @@ class ShowDetailSerialiser(serializers.ModelSerializer):
             return TheatreSerializer(theatre).data
         except Theatre.DoesNotExist:
             return None
+
