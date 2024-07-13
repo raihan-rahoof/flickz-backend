@@ -4,11 +4,11 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from django.utils.encoding import force_str, smart_bytes, smart_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from rest_framework import serializers
+from rest_framework import serializers,status
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
-
+from rest_framework.response import Response
 from .models import User, UserProfile
 from .utils import send_normal_email
 
@@ -125,6 +125,8 @@ class PasswordResetRequestSerializer(serializers.Serializer):
                 "to_email": user.email,
             }
             send_normal_email(data)
+        else:
+            return Response({'error':'This Email Doesnt exists'},status=status.HTTP_404_NOT_FOUND)
 
         return super().validate(attrs)
 
