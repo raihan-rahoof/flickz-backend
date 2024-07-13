@@ -22,8 +22,7 @@ class UserManager(BaseUserManager):
                 raise ValueError(_("Users must submit a first name"))
             if not last_name:
                 raise ValueError(_("Users must submit a last name"))
-            if not phone:
-                raise ValueError(_("Users must submit a phone number"))
+            
         else:
             first_name = first_name or ''
             last_name = last_name or ''
