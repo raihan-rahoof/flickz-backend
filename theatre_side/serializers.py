@@ -224,3 +224,4 @@ class TheatreDashboardSerializer(serializers.Serializer):
     todays_revenue = serializers.DecimalField(max_digits=10,decimal_places=2)
     monthly_revenue = serializers.DecimalField(max_digits=10,decimal_places=2)
     yearly_revenue = serializers.IntegerField()
+    expired_shows = serializers.IntegerField()

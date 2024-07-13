@@ -143,7 +143,7 @@ class ShowDetailView(APIView):
                 {"error": "Show not found"}, status=status.HTTP_404_NOT_FOUND
             )
 
-        #online bookings
+        # online bookings
         total_revenue_online = sum(booking.total_price for booking in show.bookings.all())
         tickets_sold_online = sum(len(booking.seats) for booking in show.bookings.all())
 
@@ -173,22 +173,36 @@ class ShowDetailView(APIView):
 
 
 class TheatreDashboardView(APIView):
-    permission_classes=[IsAuthenticated]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, *args, **kwargs):
         today = timezone.now().date()
         start_of_month = today.replace(day=1)
         start_of_year = today.replace(month=1, day=1)
 
-        todays_bookings = Bookings.objects.filter(date=today)
-        todays_revenue = sum(booking.amount for booking in todays_bookings)
+        # Calculate today's revenue
+        todays_revenue = 0
+        todays_shows = Shows.objects.filter(date=today)
+        for show in todays_shows:
+            todays_revenue += sum(
+                booking.amount for booking in Bookings.objects.filter(show=show)
+            )
 
         # Calculate monthly revenue
-        monthly_bookings = Bookings.objects.filter(date__gte=start_of_month)
-        monthly_revenue = sum(booking.amount for booking in monthly_bookings)
+        monthly_revenue = 0
+        monthly_shows = Shows.objects.filter(date__gte=start_of_month)
+        for show in monthly_shows:
+            monthly_revenue += sum(
+                booking.amount for booking in Bookings.objects.filter(show=show)
+            )
 
         # Calculate yearly revenue
-        yearly_bookings = Bookings.objects.filter(date__gte=start_of_year)
-        yearly_revenue = sum(booking.amount for booking in yearly_bookings)
+        yearly_revenue = 0
+        yearly_shows = Shows.objects.filter(date__gte=start_of_year)
+        for show in yearly_shows:
+            yearly_revenue += sum(
+                booking.amount for booking in Bookings.objects.filter(show=show)
+            )
 
         # Calculate expired shows
         expired_shows = Shows.objects.filter(date__lt=today).count()
