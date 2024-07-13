@@ -182,7 +182,7 @@ class TheatreDashboardView(APIView):
 
         # Calculate today's revenue
         todays_revenue = 0
-        todays_shows = Shows.objects.filter(date=today)
+        todays_shows = Shows.objects.filter(date__gte=today)
         for show in todays_shows:
             todays_revenue += sum(
                 booking.total_price for booking in Bookings.objects.filter(show=show)
