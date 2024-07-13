@@ -81,3 +81,10 @@ class ThatreListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Theatre
         fields = '__all__'
+
+
+class AdminDashboardSerializer(serializers.Serializer):
+    total_users = serializers.IntegerField()
+    total_theatres = serializers.IntegerField()
+    total_movies = serializers.IntegerField()
+    blocked_users = serializers.IntegerField()
