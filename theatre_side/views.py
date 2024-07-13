@@ -5,6 +5,7 @@ from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from .utils import send_generated_otp_to_email
 from rest_framework.views import APIView
 from django.utils import timezone
+from datetime import timedelta
 from datetime import date
 from bookings.models import Bookings,OfflineBookings
 
@@ -18,7 +19,8 @@ from .serializers import (
     ShowSerializer,
     ShowDetailSerialiser,
     UserSerializer,
-    OfflineBookingSerializer
+    OfflineBookingSerializer,
+    TheatreDashboardSerializer
 )
 from adminside.models import Movie
 
@@ -141,7 +143,7 @@ class ShowDetailView(APIView):
                 {"error": "Show not found"}, status=status.HTTP_404_NOT_FOUND
             )
 
-        # Online bookings
+        #online bookings
         total_revenue_online = sum(booking.total_price for booking in show.bookings.all())
         tickets_sold_online = sum(len(booking.seats) for booking in show.bookings.all())
 
@@ -168,3 +170,35 @@ class ShowDetailView(APIView):
         data["offline_bookings"] = offline_bookings_serializer.data
 
         return Response(data, status=status.HTTP_200_OK)
+
+
+class TheatreDashboardView(APIView):
+    permission_classes=[IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        today = timezone.now().date()
+        start_of_month = today.replace(day=1)
+        start_of_year = today.replace(month=1, day=1)
+
+        todays_bookings = Bookings.objects.filter(date=today)
+        todays_revenue = sum(booking.amount for booking in todays_bookings)
+
+        # Calculate monthly revenue
+        monthly_bookings = Bookings.objects.filter(date__gte=start_of_month)
+        monthly_revenue = sum(booking.amount for booking in monthly_bookings)
+
+        # Calculate yearly revenue
+        yearly_bookings = Bookings.objects.filter(date__gte=start_of_year)
+        yearly_revenue = sum(booking.amount for booking in yearly_bookings)
+
+        # Calculate expired shows
+        expired_shows = Shows.objects.filter(date__lt=today).count()
+
+        data = {
+            "todays_revenue": todays_revenue,
+            "monthly_revenue": monthly_revenue,
+            "yearly_revenue": yearly_revenue,
+            "expired_shows": expired_shows,
+        }
+
+        serializer = TheatreDashboardSerializer(data)
+        return Response(serializer.data)
