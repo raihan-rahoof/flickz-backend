@@ -185,7 +185,7 @@ class TheatreDashboardView(APIView):
         todays_shows = Shows.objects.filter(date=today)
         for show in todays_shows:
             todays_revenue += sum(
-                booking.amount for booking in Bookings.objects.filter(show=show)
+                booking.total_price for booking in Bookings.objects.filter(show=show)
             )
 
         # Calculate monthly revenue
@@ -193,7 +193,7 @@ class TheatreDashboardView(APIView):
         monthly_shows = Shows.objects.filter(date__gte=start_of_month)
         for show in monthly_shows:
             monthly_revenue += sum(
-                booking.amount for booking in Bookings.objects.filter(show=show)
+                booking.total_price for booking in Bookings.objects.filter(show=show)
             )
 
         # Calculate yearly revenue
@@ -201,7 +201,7 @@ class TheatreDashboardView(APIView):
         yearly_shows = Shows.objects.filter(date__gte=start_of_year)
         for show in yearly_shows:
             yearly_revenue += sum(
-                booking.amount for booking in Bookings.objects.filter(show=show)
+                booking.total_price for booking in Bookings.objects.filter(show=show)
             )
 
         # Calculate expired shows
