@@ -17,7 +17,8 @@ from .serializers import (
     ShowListSerializer,
     ShowSerializer,
     ShowDetailSerialiser,
-    UserSerializer
+    UserSerializer,
+    OfflineBookingSerializer
 )
 from adminside.models import Movie
 
@@ -131,6 +132,7 @@ class AvailableShows(APIView):
 
 
 class ShowDetailView(APIView):
+
     def get(self, request, show_id):
         try:
             show = Shows.objects.prefetch_related("bookings").get(id=show_id)
@@ -139,18 +141,19 @@ class ShowDetailView(APIView):
                 {"error": "Show not found"}, status=status.HTTP_404_NOT_FOUND
             )
 
-        
-        total_revenue_online = sum(
-            booking.total_price for booking in show.bookings.all()
-        )
+        # Online bookings
+        total_revenue_online = sum(booking.total_price for booking in show.bookings.all())
         tickets_sold_online = sum(len(booking.seats) for booking in show.bookings.all())
 
-       
+        # Offline bookings
         offline_bookings = OfflineBookings.objects.filter(show=show)
         total_revenue_offline = sum(booking.total_price for booking in offline_bookings)
         tickets_sold_offline = sum(len(booking.seats) for booking in offline_bookings)
 
-       
+        # Serialize offline bookings
+        offline_bookings_serializer = OfflineBookingSerializer(offline_bookings, many=True)
+
+        # Combined data
         total_revenue = total_revenue_online + total_revenue_offline
         tickets_sold = tickets_sold_online + tickets_sold_offline
 
@@ -162,5 +165,6 @@ class ShowDetailView(APIView):
         data["tickets_sold_offline"] = tickets_sold_offline
         data["total_revenue"] = total_revenue
         data["tickets_sold"] = tickets_sold
+        data["offline_bookings"] = offline_bookings_serializer.data
 
         return Response(data, status=status.HTTP_200_OK)

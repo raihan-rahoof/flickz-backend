@@ -203,3 +203,18 @@ class ShowDetailSerialiser(serializers.ModelSerializer):
         except Theatre.DoesNotExist:
             return None
 
+
+class OfflineBookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OfflineBookings
+        fields = [
+            "id",
+            "seats",
+            "name",
+            "email",
+            "phone",
+            "seat_number",
+            "total_price",
+            "payment_status",
+            "show",
+        ]
