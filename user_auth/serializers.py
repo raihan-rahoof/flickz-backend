@@ -114,12 +114,9 @@ class PasswordResetRequestSerializer(serializers.Serializer):
             user = User.objects.get(email=email)
             uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
             token = PasswordResetTokenGenerator().make_token(user)
-            request = self.context.get("request")
-            current_site = get_current_site(request).domain
-            relative_link = reverse(
-                "reset-password-confirm", kwargs={"uidb64": uidb64, "token": token}
-            )
-            abslink = f"https://{current_site}{relative_link}"
+            frontend_site = "flickz.onrender.com" 
+            relative_link = f"/reset-password-confirm/{uidb64}/{token}/"
+            abslink = f"https://{frontend_site}{relative_link}"
             print(abslink)
             email_body = f"Hi {user.first_name} use the link below to reset your password {abslink}"
             data = {
