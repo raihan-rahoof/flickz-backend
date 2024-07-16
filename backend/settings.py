@@ -196,11 +196,17 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-EMAIL_HOST = "sandbox.smtp.mailtrap.io"
-EMAIL_HOST_USER = "8b25eae7f4710c"
-EMAIL_HOST_PASSWORD = "9df82fb38c9fcc"
-EMAIL_PORT = "2525"
+# EMAIL_HOST = "sandbox.smtp.mailtrap.io"
+# EMAIL_HOST_USER = "8b25eae7f4710c"
+# EMAIL_HOST_PASSWORD = "9df82fb38c9fcc"
+# EMAIL_PORT = "2525"
+# EMAIL_USE_TLS = True
+
+EMAIL_HOST = "smtp.gmail.com"
 EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "flickz770@gmail.com"
+EMAIL_HOST_PASSWORD = "uiaaqrtigcbdvfiu"
 
 AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend",)
 
