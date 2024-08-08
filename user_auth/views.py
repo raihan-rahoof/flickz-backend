@@ -1,5 +1,5 @@
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.utils.encoding import (
     DjangoUnicodeDecodeError,
     force_str,
@@ -17,11 +17,11 @@ from .models import OneTimePassword, User, UserProfile
 from .serializers import (
     LoginSerializer,
     LogoutUserSerializer,
+    MobileVerificaitonSerializer,
     PasswordResetRequestSerializer,
     SetNewPasswordSerializer,
     UserProfileSerializer,
     UserRegisterSerializer,
-    MobileVerificaitonSerializer,
 )
 from .utils import send_generated_otp_to_email
 
@@ -170,10 +170,19 @@ class TestingAuthenticatedReq(GenericAPIView):
 
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = UserProfileSerializer
 
-    
-        
+    def get(self, request, *args, **kwargs):
+        try:
+            user = request.user
+            details = User.objects.select_related("profile").get(user=user)
+
+            serializer = UserProfileSerializer(details)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response(
+                {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
+            )
 
 
 class ProfileMobileVerificationHandle(APIView):
