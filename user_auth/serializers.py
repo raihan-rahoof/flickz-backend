@@ -206,31 +206,29 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "is_mobile_verified",
         ]
 
-    def update(self,instance,validated_data):
+    def update(self, instance, validated_data):
+            # Handle the nested user data
+            user_data = validated_data.pop('user', None)
+            if user_data:
+                user = instance.user
+                user.first_name = user_data.get('first_name', user.first_name)
+                user.last_name = user_data.get('last_name', user.last_name)
+                user.phone = user_data.get('phone', user.phone)
+                user.save()
 
-        user_data = validated_data.pop('user',None)
+            # Update the UserProfile fields
+            instance.birth_date = validated_data.get('birth_date', instance.birth_date)
+            instance.gender = validated_data.get('gender', instance.gender)
+            instance.address = validated_data.get('address', instance.address)
+            instance.pincode = validated_data.get('pincode', instance.pincode)
+            instance.city = validated_data.get('city', instance.city)
+            instance.district = validated_data.get('district', instance.district)
+            instance.state = validated_data.get('state', instance.state)
+            instance.user_image = validated_data.get('user_image', instance.user_image)
+            instance.is_mobile_verified = validated_data.get('is_mobile_verified', instance.is_mobile_verified)
+            instance.save()
 
-        instance.birth_date = validated_data.get("birth_date", instance.birth_date)
-        instance.gender = validated_data.get("gender", instance.gender)
-        instance.address = validated_data.get("address", instance.address)
-        instance.pincode = validated_data.get("pincode", instance.pincode)
-        instance.city = validated_data.get("city", instance.city)
-        instance.district = validated_data.get("district", instance.district)
-        instance.state = validated_data.get("state", instance.state)
-        instance.user_image = validated_data.get("user_image", instance.user_image)
-        instance.is_mobile_verified = validated_data.get(
-            "is_mobile_verified", instance.is_mobile_verified
-        )
-        instance.save()
-
-        if user_data:
-            user = instance.user
-            user.first_name = user_data.get("first_name", user.first_name)
-            user.last_name = user_data.get("last_name", user.last_name)
-            user.phone = user_data.get("phone", user.phone)
-            user.save()
-
-        return instance
+            return instance
 
 class MobileVerificaitonSerializer(serializers.ModelSerializer):
     class Meta:
