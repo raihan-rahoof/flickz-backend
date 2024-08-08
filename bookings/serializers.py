@@ -14,6 +14,8 @@ class BookingSerializer(serializers.ModelSerializer):
             "seat_number",
             "total_price",
             "payment_status",
+            "ticket_expiration",
+            "booked_at",
             "stripe_payment_id",
         ]
 
