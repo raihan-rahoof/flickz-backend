@@ -11,7 +11,7 @@ from user_auth.models import UserProfile,User
 # Create your views here.
 
 class HomeMovieListView(ListAPIView):
-    queryset = Movie.objects.all()
+    queryset = Movie.objects.all().order_by('-id')
     serializer_class = MovieSerializer
 
 class MovieDetailsView(RetrieveAPIView):
