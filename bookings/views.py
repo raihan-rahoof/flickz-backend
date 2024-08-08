@@ -177,7 +177,7 @@ class TicketsListView(APIView):
 
     def get(self,request):
         try:
-            tickets=Bookings.objects.filter(user=request.user.id)
+            tickets=Bookings.objects.filter(user=request.user.id).order_by()
             serializer = BookingSerializer(tickets,many=True)
             return Response(serializer.data)
         except User.DoesNotExist:
