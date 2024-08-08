@@ -168,19 +168,12 @@ class TestingAuthenticatedReq(GenericAPIView):
 # ------------------ User Profile ----------------------------
 
 
-class UserProfileView(RetrieveUpdateAPIView):
+class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserProfileSerializer
 
-    def get_object(self):
-        try:
-            user = UserProfile.objects.get(user=self.request.user)
-            return user
-        except UserProfile.DoesNotExist:
-            return Response(
-                {"error": "Userprofile Does not exists"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+    
+        
 
 
 class ProfileMobileVerificationHandle(APIView):

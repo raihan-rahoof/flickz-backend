@@ -194,19 +194,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = "__all__"
 
-    def update(self,instance,validated_data):
-        user_data = validated_data.pop('user',None)
-        for attr,value in validated_data.items():
-            setattr(instance,attr,value)
-        instance.save()
-
-        if user_data:
-            user = instance.user
-            for attr,value in validated_data.items():
-                setattr(user,attr,value)
-            user.save()
-
-        return instance
+    
 
 
 class MobileVerificaitonSerializer(serializers.ModelSerializer):
