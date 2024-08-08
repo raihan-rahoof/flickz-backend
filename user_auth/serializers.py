@@ -187,14 +187,24 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['first_name','last_name','phone','email']
         read_only_fields = ["email"]
 
-class UserProfileSerializer(serializers.ModelSerializer):
 
-    user = UserSerializer(required=False)
+class UserProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
     class Meta:
         model = UserProfile
-        fields = "__all__"
-
-    
+        fields = [
+            "user",
+            "birth_date",
+            "gender",
+            "address",
+            "pincode",
+            "city",
+            "district",
+            "state",
+            "user_image",
+            "is_mobile_verified",
+        ]
 
 
 class MobileVerificaitonSerializer(serializers.ModelSerializer):

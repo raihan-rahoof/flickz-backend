@@ -26,6 +26,7 @@ ALLOWED_HOSTS = [
     "flickz-backend.duckdns.org",
     "13.53.133.66",
     "localhost",
+    "127.0.0.1",
 ]
 
 AUTH_USER_MODEL = "user_auth.User"

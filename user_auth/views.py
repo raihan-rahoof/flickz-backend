@@ -173,17 +173,29 @@ class UserProfileView(APIView):
 
     def get(self, request, *args, **kwargs):
         try:
-            user = request.user
-            details = User.objects.select_related("profile").get(user=user)
-
-            serializer = UserProfileSerializer(details)
+            user = request.user.id
+            print(user)
+            details = User.objects.select_related("profile").get(id=user)
+            print(details)
+            serializer = UserProfileSerializer(details.profile)
 
             return Response(serializer.data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response(
                 {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
             )
-
+    
+    def put(self,request,*args,**kwargs):
+        try:
+            user_id = request.user.id
+            details = User.objects.select_related('profile').get(id=user_id)
+            serializer = UserProfileSerializer(details.profile,data = request.data,partial=False)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data,status=status.HTTP_200_OK)
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            return Response({'error':'User not found'},status=status.HTTP_404_NOT_FOUND)
 
 class ProfileMobileVerificationHandle(APIView):
     def patch(self, request):
