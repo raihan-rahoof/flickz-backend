@@ -174,9 +174,7 @@ class UserProfileView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             user = request.user.id
-            print(user)
             details = User.objects.select_related("profile").get(id=user)
-            print(details)
             serializer = UserProfileSerializer(details.profile)
 
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -184,18 +182,40 @@ class UserProfileView(APIView):
             return Response(
                 {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
             )
-    
-    def put(self,request,*args,**kwargs):
+
+    def put(self, request, *args, **kwargs):
         try:
             user_id = request.user.id
-            details = User.objects.select_related('profile').get(id=user_id)
-            serializer = UserProfileSerializer(details.profile,data = request.data,partial=False)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data,status=status.HTTP_200_OK)
-            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+            details = User.objects.select_related("profile").get(id=user_id)
+
+            # Update User fields
+            user_data = request.data.get("user", {})
+            details.first_name = user_data.get("first_name", details.first_name)
+            details.last_name = user_data.get("last_name", details.last_name)
+            details.phone = user_data.get("phone", details.phone)
+            details.save()
+
+            # Update UserProfile fields
+            profile = details.profile
+            profile.birth_date = request.data.get("birth_date", profile.birth_date)
+            profile.gender = request.data.get("gender", profile.gender)
+            profile.address = request.data.get("address", profile.address)
+            profile.pincode = request.data.get("pincode", profile.pincode)
+            profile.city = request.data.get("city", profile.city)
+            profile.district = request.data.get("district", profile.district)
+            profile.state = request.data.get("state", profile.state)
+            if "user_image" in request.data:
+                profile.user_image = request.data["user_image"]
+            profile.save()
+
+            serializer = UserProfileSerializer(profile)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
         except User.DoesNotExist:
-            return Response({'error':'User not found'},status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
 
 class ProfileMobileVerificationHandle(APIView):
     def patch(self, request):
