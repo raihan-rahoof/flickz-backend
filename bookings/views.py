@@ -10,6 +10,7 @@ from .serializers import BookingSerializer,OfflineBookingSerializer
 from rest_framework import generics
 from user_auth.models import User
 from .models import Bookings , OfflineBookings
+from django.utils import timezone
 
 
 # Create your views here.
@@ -177,7 +178,13 @@ class TicketsListView(APIView):
 
     def get(self,request):
         try:
-            tickets=Bookings.objects.filter(user=request.user.id).order_by()
+            tickets=Bookings.objects.filter(user=request.user.id).order_by('-booked_at')
+            expiration_time = tickets.show.end_time
+
+            if timezone.now() > expiration_time:
+                tickets.ticket_expiration = True
+                
+
             serializer = BookingSerializer(tickets,many=True)
             return Response(serializer.data)
         except User.DoesNotExist:
