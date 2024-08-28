@@ -1,17 +1,19 @@
+from datetime import datetime
+
 import stripe
 from django.conf import settings
-from rest_framework import status
+from django.utils import timezone
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from theatre_screen.models import Seat,Section , ShowSeatReservation
-from theatre_side.models import Shows 
-from .serializers import BookingSerializer,OfflineBookingSerializer
-from rest_framework import generics
-from user_auth.models import User
-from .models import Bookings , OfflineBookings
-from django.utils import timezone
 
+from theatre_screen.models import Seat, Section, ShowSeatReservation
+from theatre_side.models import Shows
+from user_auth.models import User
+
+from .models import Bookings, OfflineBookings
+from .serializers import BookingSerializer, OfflineBookingSerializer
 
 # Create your views here.
 
@@ -67,7 +69,7 @@ class CreateCheckoutSessionView(APIView):
                 show=show,
                 user=user,
                 seats=seats,
-                seat_number = seat_numbers,
+                seat_number=seat_numbers,
                 total_price=total_price,
                 stripe_payment_id=checkout_session.id,
                 payment_status="Pending",
@@ -87,11 +89,9 @@ class PaymentSuccessView(APIView):
     def get(self, request, *args, **kwargs):
         stripe_payment_id = request.query_params.get("session_id")
         bookings = Bookings.objects.get(stripe_payment_id=stripe_payment_id)
-        print('!!!!!!!!!!!!!!!a;klsdjksaf 0000000001111111111111111')
+        print("!!!!!!!!!!!!!!!a;klsdjksaf 0000000001111111111111111")
         bookings.payment_status = "Paid"
         bookings.save()
-
-        
 
         for seat_id in bookings.seats:
             try:
@@ -103,7 +103,10 @@ class PaymentSuccessView(APIView):
                 continue
         serializer = BookingSerializer(bookings)
 
-        return Response({"status": "Payment_successful" , "details":serializer.data}, status=status.HTTP_200_OK)
+        return Response(
+            {"status": "Payment_successful", "details": serializer.data},
+            status=status.HTTP_200_OK,
+        )
 
 
 class PaymentCancelView(APIView):
@@ -154,9 +157,7 @@ class HandleOfflineBookingView(APIView):
                 try:
                     seat = Seat.objects.get(id=seat_id)
                     reservation, created = ShowSeatReservation.objects.get_or_create(
-                        show=show,
-                        seat=seat,
-                        is_reserved=True
+                        show=show, seat=seat, is_reserved=True
                     )
                     if not created:
                         reservation.is_reserved = True
@@ -173,21 +174,28 @@ class HandleOfflineBookingView(APIView):
 
 # ----------------- Booking details ------------------------------------
 
-class TicketsListView(APIView):
-    permission_classes=[IsAuthenticated]
 
-    def get(self,request):
+class TicketsListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
         try:
-            tickets=Bookings.objects.filter(user=request.user.id).order_by('-booked_at')
+            tickets = Bookings.objects.filter(user=request.user.id).order_by(
+                "-booked_at"
+            )
 
             for ticket in tickets:
-                expiration_time = ticket.show.end_time
+                today = timezone.localdate()  
+                end_datetime = datetime.combine(today, ticket.show.end_time)
 
-                if timezone.now() > expiration_time:
-                    tickets.ticket_expiration = True
-                
+                if timezone.now() > end_datetime:
+                    ticket.ticket_expiration = True
+                    ticket.save()
 
-            serializer = BookingSerializer(tickets,many=True)
+            serializer = BookingSerializer(tickets, many=True)
             return Response(serializer.data)
         except User.DoesNotExist:
-            return Response({'error':'user or booking not available'},status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "user or booking not available"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
