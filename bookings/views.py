@@ -185,12 +185,21 @@ class TicketsListView(APIView):
             )
 
             for ticket in tickets:
+               
                 today = timezone.localdate()  
-                end_datetime = datetime.combine(today, ticket.show.end_time)
+                end_time = ticket.show.end_time
+                
+                
+                if timezone.is_naive(end_time):
+                    end_time = timezone.make_aware(datetime.combine(today, end_time), timezone.get_current_timezone())
+                else:
+                   
+                    end_time = datetime.combine(today, end_time).astimezone(timezone.get_current_timezone())
 
-                if timezone.now() > end_datetime:
+                
+                if timezone.now() > end_time:
                     ticket.ticket_expiration = True
-                    ticket.save()
+                    ticket.save()  
 
             serializer = BookingSerializer(tickets, many=True)
             return Response(serializer.data)
