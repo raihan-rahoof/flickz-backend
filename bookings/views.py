@@ -179,10 +179,12 @@ class TicketsListView(APIView):
     def get(self,request):
         try:
             tickets=Bookings.objects.filter(user=request.user.id).order_by('-booked_at')
-            expiration_time = tickets.show.end_time
 
-            if timezone.now() > expiration_time:
-                tickets.ticket_expiration = True
+            for ticket in tickets:
+                expiration_time = ticket.show.end_time
+
+                if timezone.now() > expiration_time:
+                    tickets.ticket_expiration = True
                 
 
             serializer = BookingSerializer(tickets,many=True)
