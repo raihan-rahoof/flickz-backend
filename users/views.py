@@ -1,10 +1,10 @@
 from rest_framework.generics import ListAPIView , RetrieveAPIView
 from adminside.models import Movie
-from .serializers import MovieSerializer
+from .serializers import MovieSerializer,BannerListSerialzer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from adminside.models import Movie
+from adminside.models import Movie,Banner
 from adminside.serializers import MovieSerializer
 from user_auth.models import UserProfile,User
 
@@ -27,3 +27,6 @@ class MovieSearchView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response([], status=status.HTTP_200_OK)
 
+class BannerListView(ListAPIView):
+    queryset = Banner.objects.all()
+    serializer_class = BannerListSerialzer
