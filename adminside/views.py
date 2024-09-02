@@ -130,4 +130,9 @@ class BannerListCreateView(generics.ListCreateAPIView):
      serializer_class = BannerSerializer
      permission_classes = [IsAdminUser]
 
-     
+     def create(self,request,*args,**kwargs):
+          existing = Banner.objects.first()
+          if existing:
+               existing.delete()
+          
+          return super().create(request,*args,**kwargs)
