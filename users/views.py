@@ -48,7 +48,7 @@ class ReviewCreateView(APIView):
 
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, movie_id, show_id, *args, **kwargs):
+    def post(self, request, movie_id, *args, **kwargs):
         movie = Movie.objects.get(id=movie_id)
         review_text = request.data.get("review_text")
         booking_id = request.data.get("booking_id")
