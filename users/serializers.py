@@ -27,7 +27,7 @@ class MovieForReviewSerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     user = UserForReviewSerializer
     movie = MovieForReviewSerializer
-    booking_id = serializers.IntegerField(max_lenght=10)
+    booking_id = serializers.IntegerField(max_length=10)
 
     class Meta:
         model = Review
