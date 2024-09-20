@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from user_auth.models import User
-from .models import Movie,Banner
+from .models import Movie
 from theatre_side.models import Theatre
 
 #-------------Authenticating of admin----------------------------------
@@ -89,8 +89,5 @@ class AdminDashboardSerializer(serializers.Serializer):
     total_movies = serializers.IntegerField()
     blocked_users = serializers.IntegerField()
 
-class BannerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Banner
-        fields = ['id','image','created_at']
+
         

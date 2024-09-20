@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path
 from .views import (AdminTokenObtainPairView,UserListView,BlockUnblockUser,
                     MovieListCreateAPIView,MovieupdateView,TheatreListView,
-                    TheatreDetailView,TheatreAllowOrDisallow,TheatreRequestsView,AdminDashboardView,BannerListCreateView)
+                    TheatreDetailView,TheatreAllowOrDisallow,TheatreRequestsView,AdminDashboardView)
                     
 urlpatterns = [
     path('admin/token', AdminTokenObtainPairView.as_view(), name='admin_token_obtain_pair'),
@@ -15,5 +15,5 @@ urlpatterns = [
     path('admin/theatres-request-list',TheatreRequestsView.as_view(),name='theatre-request-list'),
     path('admin/view-theatre/<int:pk>/',TheatreDetailView.as_view(),name='theatre-detail-view'),
     path('admin/theatre-allow-reject/<int:pk>/',TheatreAllowOrDisallow.as_view(),name='theatre-allow-reject'),
-    path('admin/banner/',BannerListCreateView.as_view(),name = 'theatre-list-create')
+    
 ] 

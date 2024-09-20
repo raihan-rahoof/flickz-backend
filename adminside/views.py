@@ -1,13 +1,13 @@
 from django.shortcuts import render
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import AdminLoginSerializer , UserListSerializer,MovieSerializer,ThatreListSerializer,AdminDashboardSerializer,BannerSerializer
+from .serializers import AdminLoginSerializer , UserListSerializer,MovieSerializer,ThatreListSerializer,AdminDashboardSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
 from user_auth.models import User
 from rest_framework.permissions import IsAdminUser
 from rest_framework.views import APIView
-from .models import Movie,Banner
+from .models import Movie
 from theatre_side.models import Theatre
 # Create your views here.
 
@@ -125,14 +125,3 @@ class AdminDashboardView(APIView):
         serializer = AdminDashboardSerializer(data)
         return Response(serializer.data)
 
-class BannerListCreateView(generics.ListCreateAPIView):
-     queryset = Banner.objects.all()
-     serializer_class = BannerSerializer
-     permission_classes = [IsAdminUser]
-
-     def create(self,request,*args,**kwargs):
-          existing = Banner.objects.first()
-          if existing:
-               existing.delete()
-          
-          return super().create(request,*args,**kwargs)
