@@ -7,13 +7,13 @@ from rest_framework.views import APIView
 from django.utils import timezone
 from datetime import datetime
 
-from adminside.models import Banner, Movie
+from adminside.models import Movie
 from adminside.serializers import MovieSerializer
 from user_auth.models import User, UserProfile
 from bookings.models import Bookings
 
 from .models import Review
-from .serializers import BannerListSerialzer, MovieSerializer, ReviewSerializer
+from .serializers import MovieSerializer, ReviewSerializer
 from .utils import analyze_sentiment
 
 # Create your views here.
@@ -39,9 +39,7 @@ class MovieSearchView(APIView):
         return Response([], status=status.HTTP_200_OK)
 
 
-class BannerListView(ListAPIView):
-    queryset = Banner.objects.all()
-    serializer_class = BannerListSerialzer
+
 
 
 class ReviewCreateView(APIView):

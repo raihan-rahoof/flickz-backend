@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from adminside.models import Movie,Banner
+from adminside.models import Movie
 from user_auth.models import User
 from .models import Review
 
@@ -8,10 +8,7 @@ class MovieSerializer(serializers.ModelSerializer):
         model = Movie
         fields = '__all__'
 
-class BannerListSerialzer(serializers.ModelSerializer):
-    class Meta:
-        model = Banner
-        fields = ['image']
+
 
 
 class UserForReviewSerializer(serializers.ModelSerializer):
