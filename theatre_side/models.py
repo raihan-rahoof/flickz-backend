@@ -18,7 +18,7 @@ class Theatre(models.Model):
     theatre_name = models.CharField(max_length=100, unique=True, null=True, blank=True)
     owner_name = models.CharField(max_length=100, null=True, blank=True)
     phone_number = models.CharField(max_length=15, unique=True, null=True, blank=True)
-    license = models.ImageField(upload_to="license/", null=True, blank=True)
+    license = models.URLField(null=True,blank=True)
     address = models.CharField(max_length=255, null=True, blank=True)
     city = models.CharField(max_length=100, null=True, blank=True)
     district = models.CharField(max_length=100, null=True, blank=True)
