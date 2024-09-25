@@ -95,13 +95,21 @@ class TheatreDetailView(generics.RetrieveAPIView):
 
 
 class TheatreAllowOrDisallow(generics.RetrieveUpdateAPIView):
-     queryset = Theatre.objects.all()
+     queryset = Theatre.objects.filter(is_verified=True)
      serializer_class = ThatreListSerializer
      permission_classes = [IsAdminUser]
 
      def update(self, request, *args, **kwargs):
           theatre = self.get_object()
-          theatre.admin_allow = not theatre.admin_allow
+          
+          is_decline = request.data.get('is_decline',False)
+
+          if is_decline:
+               theatre.is_verified = False
+               theatre.admin_allow = False
+          else:
+               theatre.admin_allow = not theatre.admin_allow
+          
           theatre.save()
 
           serializer = self.get_serializer(theatre)

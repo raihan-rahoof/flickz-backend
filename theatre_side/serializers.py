@@ -61,11 +61,11 @@ class TheatreLoginSerializer(serializers.Serializer):
 
         if not user.is_active and not theatre.is_active:
             raise AuthenticationFailed(
-                "Your account is Blocked by the Adminstration for some reason"
+                "Your account is Blocked by the Adminstration for some reason,Contact admin team for furthor informations"
             )
 
         if not user.is_verified and not theatre.is_verified:
-            raise AuthenticationFailed("Your account is Out of verification")
+            raise AuthenticationFailed("Your account is Out of verification,Contact admin team for furthur information")
 
         theatre_profile = authenticate(
             request, email=email, password=password, user_type="theatre"
