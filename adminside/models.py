@@ -7,7 +7,6 @@ class Movie(models.Model):
     cover_image = models.URLField(null=True, blank=True)
     trailer_link = models.URLField(null=True,blank=True)
     duration = models.CharField(max_length=100,null=True,blank=True)
-    cast = models.CharField(max_length=255,null=True,blank=True)
     genre = models.CharField(max_length=100,null=True,blank=True)
     language = models.CharField(max_length=40,null=True,blank=True)
     certificate = models.CharField(max_length=100,null=True,blank=True)
