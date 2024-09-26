@@ -83,7 +83,7 @@ class TheatreListView(generics.ListAPIView):
      permission_classes = [IsAdminUser]
 
 class TheatreRequestsView(generics.ListAPIView):
-     queryset = Theatre.objects.filter(admin_allow=False)
+     queryset = Theatre.objects.filter(is_verified=True, admin_allow=False)
      serializer_class = ThatreListSerializer
      permission_classes = [IsAdminUser]
 
@@ -94,26 +94,65 @@ class TheatreDetailView(generics.RetrieveAPIView):
      permission_classes = [IsAdminUser]
 
 
-class TheatreAllowOrDisallow(generics.RetrieveUpdateAPIView):
-     queryset = Theatre.objects.filter(is_verified=True)
-     serializer_class = ThatreListSerializer
-     permission_classes = [IsAdminUser]
+class ApproveTheatreView(APIView):
+    permission_classes=[IsAdminUser]
 
-     def update(self, request, *args, **kwargs):
-          theatre = self.get_object()
-          
-          is_decline = request.data.get('is_decline',False)
+    def patch(self,request,theatre_id,*args,**kwargs):
+        try:
+            theatre = Theatre.objects.get(id=theatre_id)
 
-          if is_decline:
-               theatre.is_verified = False
-               theatre.admin_allow = False
-          else:
-               theatre.admin_allow = not theatre.admin_allow
-          
-          theatre.save()
+            if theatre.admin_allow:
+                return Response({"message": f"Theatre '{theatre.theatre_name}' is already approved."}, 
+                                status=status.HTTP_400_BAD_REQUEST)
+            theatre.admin_allow = True
+            theatre.is_verified = True
+            theatre.is_active = True
 
-          serializer = self.get_serializer(theatre)
-          return Response(serializer.data,status=status.HTTP_200_OK)
+            theatre.save()
+
+            return Response({"message": f"Theatre '{theatre.theatre_name}' has been approved."}, 
+                            status=status.HTTP_200_OK)
+
+        except Theatre.DoesNotExist:
+            return Response(
+                {"error": "Theatre not found."}, status=status.HTTP_404_NOT_FOUND
+            )
+
+
+class DisapproveTheatreView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def patch(self, request, theatre_id,*args,**kwargs):
+        try:
+            
+            theatre = Theatre.objects.get(id=theatre_id)
+
+            
+            if not theatre.admin_allow:
+                return Response(
+                    {
+                        "message": f"Theatre '{theatre.theatre_name}' is already disapproved."
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Update the fields for disapproval
+            theatre.admin_allow = False
+            theatre.is_verified = False
+            theatre.is_active = False
+            theatre.save()
+
+            # Return success message
+            return Response(
+                {"message": f"Theatre '{theatre.theatre_name}' has been disapproved."},
+                status=status.HTTP_200_OK,
+            )
+
+        except Theatre.DoesNotExist:
+            return Response(
+                {"error": "Theatre not found."}, status=status.HTTP_404_NOT_FOUND
+            )
+
 
 class AdminDashboardView(APIView):
     permission_classes=[IsAdminUser]
@@ -132,4 +171,3 @@ class AdminDashboardView(APIView):
 
         serializer = AdminDashboardSerializer(data)
         return Response(serializer.data)
-
