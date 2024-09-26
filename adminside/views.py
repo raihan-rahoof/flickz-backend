@@ -78,7 +78,7 @@ class MovieupdateView(generics.RetrieveUpdateDestroyAPIView):
 # ----------------Theatre Side views--------------
 
 class TheatreListView(generics.ListAPIView):
-     queryset=Theatre.objects.all()
+     queryset=Theatre.objects.exclude(admin_allow=False,is_verified=False)
      serializer_class = ThatreListSerializer
      permission_classes = [IsAdminUser]
 
