@@ -128,15 +128,8 @@ class DisapproveTheatreView(APIView):
             theatre = Theatre.objects.get(id=theatre_id)
 
             
-            if not theatre.admin_allow:
-                return Response(
-                    {
-                        "message": f"Theatre '{theatre.theatre_name}' is already disapproved."
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
 
-            # Update the fields for disapproval
+            
             theatre.admin_allow = False
             theatre.is_verified = False
             theatre.is_active = False
