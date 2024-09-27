@@ -4,6 +4,7 @@ from .views import (
     ScreenRetrieveUpdateView,
     ScreenLayoutUpdateView,
     ShowSeatReservationList,
+    ScreenDestroyView,
 )
 
 urlpatterns = [
@@ -23,4 +24,5 @@ urlpatterns = [
         ShowSeatReservationList.as_view(),
         name="show_seat_reservation_list",
     ),
+    path("delete-screen/<int:pk>/", ScreenDestroyView.as_view(), name="screen-delete"),
 ]

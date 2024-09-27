@@ -137,6 +137,22 @@ class ScreenLayoutUpdateView(generics.UpdateAPIView):
         return Response(serializer.data)
 
 
+class ScreenDestroyView(generics.DestroyAPIView):
+    queryset = Screen.objects.all()
+    serializer_class = ScreenSerializer
+    permission_classes = [IsAuthenticated]
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        self.perform_destroy(instance)
+
+        return Response(
+            {"detail": "Screen and related data deleted successfully."},
+            status=status.HTTP_204_NO_CONTENT,
+        )
+
+
 class ShowSeatReservationList(APIView):
     def get(self, request, show_id):
         reservations = ShowSeatReservation.objects.filter(show_id=show_id)
