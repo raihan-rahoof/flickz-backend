@@ -118,14 +118,13 @@ class TheatreMovieSelectView(generics.ListAPIView):
     serializer_class = ShowMovieSerializer
     permission_classes = [IsAuthenticated]
 
-
 class TheaterShowUpdateView(generics.RetrieveUpdateAPIView):
     queryset = Shows.objects.all()
     serializer_class = ShowUpdateSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Shows.objects.filter(theatre=self.request.user)
+        return super().get_queryset()
 
 
 class ShowDeleteView(generics.DestroyAPIView):
