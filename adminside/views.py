@@ -10,6 +10,8 @@ from rest_framework.views import APIView
 from .models import Movie
 from theatre_side.models import Theatre
 from .utils import send_theatre_approval_email,send_theatre_disapproval_email
+from django.contrib.auth.tokens import default_token_generator
+
 # Create your views here.
 
 # -------------user side [authentication , block and unblock , also Listing users]---------
@@ -147,7 +149,40 @@ class DisapproveTheatreView(APIView):
                 {"error": "Theatre not found."}, status=status.HTTP_404_NOT_FOUND
             )
 
+class TheateBlockUnblockView(generics.GenericAPIView):
+    permission_classes=[IsAdminUser]
 
+    def patch(self,request,theatre_id,action,*args,**kwargs):
+        try:
+            theatre = Theatre.objects.get(id=theatre_id)
+
+            if action == 'block':
+                if theatre.is_active:
+                    return Response({"message": "Theatre is already blocked."}, status=status.HTTP_400_BAD_REQUEST)
+
+                theatre.is_active = False
+                theatre.is_verified = False
+                theatre.admin_allow = False
+
+                theatre.save()
+                user = theatre.user
+                default_token_generator.make_token(user)
+
+                return Response({"message": f"Theatre '{theatre.name}' has been blocked and logged out."}, status=status.HTTP_200_OK)
+
+            elif action == 'unblock':
+                if not theatre.is_active:
+                    return Response({"message": "Theatre is already unblocked."}, status=status.HTTP_400_BAD_REQUEST)
+
+                theatre.is_active = True
+                theatre.save()
+
+                return Response({"message": f"Theatre '{theatre.name}' has been unblocked."}, status=status.HTTP_200_OK)
+        except Theatre.DoesNotExist:
+            return Response(
+                {"message": "Theatre not found."}, status=status.HTTP_404_NOT_FOUND
+            )
+        
 class AdminDashboardView(APIView):
     permission_classes=[IsAdminUser]
     def get(self,request,*args,**kwargs):

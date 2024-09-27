@@ -85,7 +85,23 @@ class TheatreLoginSerializer(serializers.Serializer):
             "refresh_token": user.tokens().get("refresh"),
         }
 
-
+class TheatreProfileSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Theatre
+        fields = [
+            "owner_name",
+            "theatre_name",
+            "phone_number",
+            "license",
+            "address",
+            "city",
+            "district",
+            "state",
+            "pincode",
+            "google_maps_link",
+            
+        ]
 # ------------- Show Serialiser ---------------------------
 
 

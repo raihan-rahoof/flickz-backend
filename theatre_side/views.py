@@ -1,40 +1,42 @@
+from datetime import date, timedelta
+
+from django.utils import timezone
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken, TokenError
-from .utils import send_generated_otp_to_email
 from rest_framework.views import APIView
-from django.utils import timezone
-from datetime import timedelta
-from datetime import date
-from bookings.models import Bookings,OfflineBookings
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
-from .models import OneTimePasswordTheatre, Theatre,Shows
+from adminside.models import Movie
+from bookings.models import Bookings, OfflineBookings
+
+from .models import OneTimePasswordTheatre, Shows, Theatre
 from .serializers import (
+    OfflineBookingSerializer,
+    ShowCreateSerializer,
+    ShowDetailSerialiser,
+    ShowListSerializer,
+    ShowMovieSerializer,
+    ShowSerializer,
+    TheatreDashboardSerializer,
     TheatreLoginSerializer,
     TheatreRegistrationSerializer,
-    ShowMovieSerializer,
-    ShowCreateSerializer,
-    ShowListSerializer,
-    ShowSerializer,
-    ShowDetailSerialiser,
     UserSerializer,
-    OfflineBookingSerializer,
-    TheatreDashboardSerializer
+    TheatreProfileSerializer
 )
-from adminside.models import Movie
+from .utils import send_generated_otp_to_email
 
 
 class TheatreRegisterView(generics.GenericAPIView):
     serializer_class = TheatreRegistrationSerializer
 
-    def post(self,request):
+    def post(self, request):
         theatre_data = request.data
         serializer = self.serializer_class(data=theatre_data)
         if serializer.is_valid(raise_exception=True):
             theatre = serializer.save()
             user_email = theatre.user.email
-            send_generated_otp_to_email(user_email)  
+            send_generated_otp_to_email(user_email)
             return Response(
                 {
                     "data": serializer.data,
@@ -54,9 +56,7 @@ class TheatreEmailVerification(generics.GenericAPIView):
             theatre = theatre_pass.theatre
             user = theatre.user
 
-            
-
-            if not theatre.is_verified and not user.is_verified :
+            if not theatre.is_verified and not user.is_verified:
                 theatre.is_verified = True
                 user.is_verified = True
                 user.save()
@@ -74,13 +74,25 @@ class TheatreEmailVerification(generics.GenericAPIView):
                 {"message": "Wrong Otp"}, status=status.HTTP_400_BAD_REQUEST
             )
 
+
 class TheatreLoginView(generics.GenericAPIView):
     serializer_class = TheatreLoginSerializer
 
-    def post(self,request,*args,**kwargs):
-        serializer = self.get_serializer(data = request.data)
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
+
+class TheatreProfileView(generics.RetrieveUpdateAPIView):
+    queryset = Theatre.objects.all()
+    serializer_class = TheatreProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        user = self.request.user
+        return Theatre.objects.get(user=user)
+
 
 # ---------------- Shows -----------------
 
@@ -95,7 +107,7 @@ class TheatreShowAddView(generics.ListCreateAPIView):
         return Shows.objects.filter(theatre=self.request.user)
 
     def get_serializer_class(self):
-        if self.request.method == 'POST':
+        if self.request.method == "POST":
             return ShowCreateSerializer
         return ShowListSerializer
 
@@ -121,16 +133,18 @@ class ShowDeleteView(generics.DestroyAPIView):
 
 # ------------- user side available shows ----------------------
 class AvailableShows(APIView):
-    def get(self,request,movie_id):
+    def get(self, request, movie_id):
         try:
             movie = Movie.objects.get(id=movie_id)
         except Movie.DoesNotExist:
-            return Response({'error':'Movie doesnt exists'},status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Movie doesnt exists"}, status=status.HTTP_404_NOT_FOUND
+            )
 
         today = timezone.now().date()
-        shows = Shows.objects.filter(movie=movie,date__date__gte=today)
-        serializer = ShowListSerializer(shows,many=True)
-        return Response(serializer.data,status=status.HTTP_200_OK)
+        shows = Shows.objects.filter(movie=movie, date__date__gte=today)
+        serializer = ShowListSerializer(shows, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ShowDetailView(APIView):
@@ -144,7 +158,9 @@ class ShowDetailView(APIView):
             )
 
         # online bookings
-        total_revenue_online = sum(booking.total_price for booking in show.bookings.all())
+        total_revenue_online = sum(
+            booking.total_price for booking in show.bookings.all()
+        )
         tickets_sold_online = sum(len(booking.seats) for booking in show.bookings.all())
 
         # Offline bookings
@@ -153,7 +169,9 @@ class ShowDetailView(APIView):
         tickets_sold_offline = sum(len(booking.seats) for booking in offline_bookings)
 
         # Serialize offline bookings
-        offline_bookings_serializer = OfflineBookingSerializer(offline_bookings, many=True)
+        offline_bookings_serializer = OfflineBookingSerializer(
+            offline_bookings, many=True
+        )
 
         # Combined data
         total_revenue = total_revenue_online + total_revenue_offline
