@@ -41,7 +41,7 @@ class CreateCheckoutSessionView(APIView):
                     {"error": f"Seat with id {seat_id} does not exist"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-        poster_url = request.build_absolute_uri(show.movie.poster.url)
+        poster_url = request.build_absolute_uri(show.movie.poster)
         try:
             checkout_session = stripe.checkout.Session.create(
                 payment_method_types=["card"],
