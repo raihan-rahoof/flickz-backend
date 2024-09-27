@@ -10,7 +10,8 @@ from .views import (
     AvailableShows,
     ShowDeleteView,
     ShowDetailView,
-    TheatreDashboardView
+    TheatreDashboardView,
+    TheatreProfileView
 )
 
 urlpatterns = [
@@ -19,7 +20,12 @@ urlpatterns = [
         "verify-email/", TheatreEmailVerification.as_view(), name="email-verification"
     ),
     path("theatre-login/", TheatreLoginView.as_view(), name="theatre-login"),
-    path("theatre-dashboard/", TheatreDashboardView.as_view(), name="theatre-dashboard"),
+    path(
+        "theatre-dashboard/", TheatreDashboardView.as_view(), name="theatre-dashboard"
+    ),
+    path(
+        "theatre-profile/", TheatreProfileView.as_view(), name="theatre-profile"
+    ),
     path("shows/", TheatreShowAddView.as_view(), name="show-list-create"),
     path("view-movies/", TheatreMovieSelectView.as_view(), name="view-movies"),
     path(
