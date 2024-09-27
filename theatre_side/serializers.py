@@ -151,6 +151,32 @@ class ShowCreateSerializer(serializers.ModelSerializer):
             "end_time",
         ]
 
+class ShowUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Shows
+        fields = [
+            [
+                "show_name",
+                "movie",
+                "screen",
+                "theatre",
+                "date",
+                "start_time",
+                "end_time",
+            ]
+        ]
+
+    def update(self, instance, validated_data):
+        instance.show_name = validated_data.get("show_name", instance.show_name)
+        instance.movie = validated_data.get("movie", instance.movie)
+        instance.screen = validated_data.get("screen", instance.screen)
+        instance.theatre = validated_data.get("theatre", instance.theatre)
+        instance.date = validated_data.get("date", instance.date)
+        instance.start_time = validated_data.get("start_time", instance.start_time)
+        instance.end_time = validated_data.get("end_time", instance.end_time)
+        instance.save()
+        return instance
+
 
 class TheatreSerializer(serializers.ModelSerializer):
     class Meta:

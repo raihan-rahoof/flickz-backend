@@ -11,7 +11,8 @@ from .views import (
     ShowDeleteView,
     ShowDetailView,
     TheatreDashboardView,
-    TheatreProfileView
+    TheatreProfileView,
+    TheaterShowUpdateView
 )
 
 urlpatterns = [
@@ -23,10 +24,9 @@ urlpatterns = [
     path(
         "theatre-dashboard/", TheatreDashboardView.as_view(), name="theatre-dashboard"
     ),
-    path(
-        "theatre-profile/", TheatreProfileView.as_view(), name="theatre-profile"
-    ),
+    path("theatre-profile/", TheatreProfileView.as_view(), name="theatre-profile"),
     path("shows/", TheatreShowAddView.as_view(), name="show-list-create"),
+    path("show/<int:pk>/update/", TheaterShowUpdateView.as_view(), name="show-update"),
     path("view-movies/", TheatreMovieSelectView.as_view(), name="view-movies"),
     path(
         "movies/<int:movie_id>/available-shows/",

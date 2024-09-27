@@ -22,7 +22,8 @@ from .serializers import (
     TheatreLoginSerializer,
     TheatreRegistrationSerializer,
     UserSerializer,
-    TheatreProfileSerializer
+    TheatreProfileSerializer,
+    ShowUpdateSerializer
 )
 from .utils import send_generated_otp_to_email
 
@@ -116,6 +117,14 @@ class TheatreMovieSelectView(generics.ListAPIView):
     queryset = Movie.objects.all()
     serializer_class = ShowMovieSerializer
     permission_classes = [IsAuthenticated]
+
+class TheaterShowUpdateView(generics.RetrieveUpdateAPIView):
+    queryset = Shows.objects.all()
+    serializer_class = ShowUpdateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return super().get_queryset()
 
 
 class ShowDeleteView(generics.DestroyAPIView):
