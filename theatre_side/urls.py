@@ -26,7 +26,7 @@ urlpatterns = [
     ),
     path("theatre-profile/", TheatreProfileView.as_view(), name="theatre-profile"),
     path("shows/", TheatreShowAddView.as_view(), name="show-list-create"),
-    path("show/<int:pk>/update/", TheaterShowUpdateView.as_view(), name="show-update"),
+    path("show/update/", TheaterShowUpdateView.as_view(), name="show-update"),
     path("view-movies/", TheatreMovieSelectView.as_view(), name="view-movies"),
     path(
         "movies/<int:movie_id>/available-shows/",
