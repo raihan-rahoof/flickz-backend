@@ -52,7 +52,7 @@ class CreateCheckoutSessionView(APIView):
                             "product_data": {
                                 "name": show.movie.title,
                                 "images": [
-                                    request.show.movie.poster.url
+                                    show.movie.poster
                                 ],
                             },
                             "unit_amount": int(total_price * 100),
