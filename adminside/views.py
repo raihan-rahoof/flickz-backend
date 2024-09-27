@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.views import APIView
 from .models import Movie
 from theatre_side.models import Theatre
+from .utils import send_theatre_approval_email,send_theatre_disapproval_email
 # Create your views here.
 
 # -------------user side [authentication , block and unblock , also Listing users]---------
@@ -109,7 +110,7 @@ class ApproveTheatreView(APIView):
             theatre.is_active = True
 
             theatre.save()
-
+            send_theatre_approval_email(theatre)
             return Response({"message": f"Theatre '{theatre.theatre_name}' has been approved."}, 
                             status=status.HTTP_200_OK)
 
@@ -134,7 +135,7 @@ class DisapproveTheatreView(APIView):
             theatre.is_verified = False
             theatre.is_active = False
             theatre.save()
-
+            send_theatre_disapproval_email(theatre)
             # Return success message
             return Response(
                 {"message": f"Theatre '{theatre.theatre_name}' has been disapproved."},
