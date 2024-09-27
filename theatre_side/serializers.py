@@ -86,7 +86,7 @@ class TheatreLoginSerializer(serializers.Serializer):
         }
 
 class TheatreProfileSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = Theatre
         fields = [
@@ -102,6 +102,30 @@ class TheatreProfileSerializer(serializers.ModelSerializer):
             "google_maps_link",
             
         ]
+
+    def update(self, instance, validated_data):
+        
+        instance.owner_name = validated_data.get("owner_name", instance.owner_name)
+        instance.theatre_name = validated_data.get(
+            "theatre_name", instance.theatre_name
+        )
+        instance.phone_number = validated_data.get(
+            "phone_number", instance.phone_number
+        )
+        instance.license = validated_data.get("license", instance.license)
+        instance.address = validated_data.get("address", instance.address)
+        instance.city = validated_data.get("city", instance.city)
+        instance.district = validated_data.get("district", instance.district)
+        instance.state = validated_data.get("state", instance.state)
+        instance.pincode = validated_data.get("pincode", instance.pincode)
+        instance.google_maps_link = validated_data.get(
+            "google_maps_link", instance.google_maps_link
+        )
+
+        instance.save()
+        return instance
+
+
 # ------------- Show Serialiser ---------------------------
 
 
