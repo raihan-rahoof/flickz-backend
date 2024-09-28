@@ -93,9 +93,7 @@ class UserProfile(models.Model):
     city = models.CharField(_("city"), max_length=250, null=True, blank=True)
     district = models.CharField(_('district'),max_length=100,null=True,blank=True)
     state = models.CharField(_("state"), max_length=100, null=True, blank=True)
-    user_image = models.ImageField(
-        _("User Image"), upload_to="profile/", blank=True, null=True
-    )
+    user_image = models.URLField(null=True,blank=True)
 
     is_mobile_verified = models.BooleanField(default=False)
 
