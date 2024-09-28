@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.shortcuts import get_object_or_404, render
 from django.utils.encoding import (
@@ -189,7 +191,7 @@ class UserProfileView(APIView):
             details = User.objects.select_related("profile").get(id=user_id)
 
             # Update User fields
-            user_data = request.data.get("user", {})
+            user_data = json.loads(request.data.get("user", "{}"))
             details.first_name = user_data.get("first_name", details.first_name)
             details.last_name = user_data.get("last_name", details.last_name)
             details.phone = user_data.get("phone", details.phone)
