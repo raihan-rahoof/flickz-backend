@@ -8,9 +8,6 @@ class MovieSerializer(serializers.ModelSerializer):
         model = Movie
         fields = '__all__'
 
-
-
-
 class UserForReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

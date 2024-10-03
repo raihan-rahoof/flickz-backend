@@ -1,27 +1,32 @@
+from datetime import datetime
+
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.utils import timezone
-from datetime import datetime
 
 from adminside.models import Movie
 from adminside.serializers import MovieSerializer
-from user_auth.models import User, UserProfile
 from bookings.models import Bookings
+from user_auth.models import User, UserProfile
 
 from .models import Review
 from .serializers import MovieSerializer, ReviewSerializer
 from .utils import analyze_sentiment
+from .pagination import MoviePagination
 
-# Create your views here.
+
+
+
 
 
 class HomeMovieListView(ListAPIView):
     queryset = Movie.objects.all().order_by("-id")
     serializer_class = MovieSerializer
+    pagination_class = MoviePagination
 
 
 class MovieDetailsView(RetrieveAPIView):
@@ -39,9 +44,6 @@ class MovieSearchView(APIView):
         return Response([], status=status.HTTP_200_OK)
 
 
-
-
-
 class ReviewCreateView(APIView):
 
     permission_classes = [IsAuthenticated]
@@ -51,21 +53,21 @@ class ReviewCreateView(APIView):
         review_text = request.data.get("review_text")
         booking_id = request.data.get("booking_id")
         if not booking_id:
-            raise ValidationError('Booking id is Required not found')
+            raise ValidationError("Booking id is Required not found")
 
         try:
             booking = Bookings.objects.get(id=booking_id)
         except Bookings.DoesNotExist:
-            raise ValidationError('Booking with this Id does not exist')
+            raise ValidationError("Booking with this Id does not exist")
 
         if not booking.ticket_expiration:
-            raise ValidationError('You can only write review after watching the movie')
+            raise ValidationError("You can only write review after watching the movie")
 
         show = booking.show
-        show_datetime = datetime.combine(show.date,show.end_time)
+        show_datetime = datetime.combine(show.date, show.end_time)
 
         if show_datetime < timezone.now():
-            raise ValidationError('You can only write review after watching the movie')
+            raise ValidationError("You can only write review after watching the movie")
 
         sentiment = analyze_sentiment(review_text)
 
