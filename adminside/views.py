@@ -8,6 +8,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from theatre_side.models import Theatre
 from user_auth.models import User
+from .pagination import MoviePagination
 
 from .models import Movie
 from .serializers import (
@@ -62,6 +63,7 @@ class MovieListCreateAPIView(generics.ListCreateAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
     permission_classes = [IsAdminUser]
+    pagination_class = MoviePagination
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -77,7 +79,8 @@ class MovieListCreateAPIView(generics.ListCreateAPIView):
 
         if existing_movie:
             return Response(
-                {"error": "Movie with same Name,Language,Genre already exists"}
+                {"error": "Movie with same Name,Language,Genre already exists"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         self.perform_create(serializer)
