@@ -1,7 +1,16 @@
 from datetime import date, timedelta
 
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils import timezone
+from django.utils.encoding import (
+    DjangoUnicodeDecodeError,
+    force_str,
+    smart_bytes,
+    smart_str,
+)
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from rest_framework import generics, status
+from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -9,6 +18,7 @@ from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
 from adminside.models import Movie
 from bookings.models import Bookings, OfflineBookings
+from user_auth.models import User
 
 from .models import OneTimePasswordTheatre, Shows, Theatre
 from .serializers import (
@@ -18,12 +28,14 @@ from .serializers import (
     ShowListSerializer,
     ShowMovieSerializer,
     ShowSerializer,
+    ShowUpdateSerializer,
     TheatreDashboardSerializer,
     TheatreLoginSerializer,
-    TheatreRegistrationSerializer,
-    UserSerializer,
+    TheatrePasswordResetRequestSerializer,
     TheatreProfileSerializer,
-    ShowUpdateSerializer
+    TheatreRegistrationSerializer,
+    TheatreSetNewPasswordSerializer,
+    UserSerializer,
 )
 from .utils import send_generated_otp_to_email
 
@@ -85,6 +97,61 @@ class TheatreLoginView(generics.GenericAPIView):
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 
+class TheatrePasswordResetRequest(GenericAPIView):
+    serializer_class = TheatrePasswordResetRequestSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(
+            data=request.data, context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
+        return Response(
+            {"message": "we have sent you a email to reset password"},
+            status=status.HTTP_200_OK,
+        )
+
+
+class TheatrePasswordResetConfirm(GenericAPIView):
+
+    def get(self, request, uidb64, token):
+        try:
+            user_id = smart_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(id=user_id)
+
+            if not PasswordResetTokenGenerator().check_token(user, token):
+                return Response(
+                    {"message": "token is invalid or has expired"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
+            return Response(
+                {
+                    "success": True,
+                    "message": "credentials is valid",
+                    "uidb64": uidb64,
+                    "token": token,
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        except DjangoUnicodeDecodeError as identifier:
+            return Response(
+                {"message": "token is invalid or has expired"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+
+class TheatreSetNewPasswordView(GenericAPIView):
+    serializer_class = TheatreSetNewPasswordSerializer
+
+    def patch(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(
+            {"success": True, "message": "password reset is succesful"},
+            status=status.HTTP_200_OK,
+        )
+
+
 class TheatreProfileView(generics.RetrieveUpdateAPIView):
     queryset = Theatre.objects.all()
     serializer_class = TheatreProfileSerializer
@@ -117,6 +184,7 @@ class TheatreMovieSelectView(generics.ListAPIView):
     queryset = Movie.objects.all()
     serializer_class = ShowMovieSerializer
     permission_classes = [IsAuthenticated]
+
 
 class TheaterShowUpdateView(generics.RetrieveUpdateAPIView):
     queryset = Shows.objects.all()

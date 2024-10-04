@@ -5,6 +5,9 @@ from .views import (
     TheatreLoginView,
     # TheatreLogoutView,
     TheatreRegisterView,
+    TheatrePasswordResetConfirm,
+    TheatrePasswordResetRequest,
+    TheatreSetNewPasswordView,
     TheatreMovieSelectView,
     TheatreShowAddView,
     AvailableShows,
@@ -25,6 +28,13 @@ urlpatterns = [
         "theatre-dashboard/", TheatreDashboardView.as_view(), name="theatre-dashboard"
     ),
     path("theatre-profile/", TheatreProfileView.as_view(), name="theatre-profile"),
+    path("password-reset/", TheatrePasswordResetRequest.as_view(), name="password-reset"),
+    path(
+        "reset-password-confirm/<uidb64>/<token>/",
+        TheatrePasswordResetConfirm.as_view(),
+        name="reset-password-confirm",
+    ),
+    path("set-new-password/", TheatreSetNewPasswordView.as_view(), name="set-new-password"),
     path("shows/", TheatreShowAddView.as_view(), name="show-list-create"),
     path("show/<int:pk>/update/", TheaterShowUpdateView.as_view(), name="show-update"),
     path("view-movies/", TheatreMovieSelectView.as_view(), name="view-movies"),
