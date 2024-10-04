@@ -103,7 +103,7 @@ class TheatrePasswordResetRequestSerializer(serializers.Serializer):
         user = User.objects.get(email=email)
         uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
         token = PasswordResetTokenGenerator().make_token(user)
-        frontend_site = "flickz.onrender.com"
+        frontend_site = "flickz.onrender.com/theatre"
         relative_link = f"/reset-password-confirm/{uidb64}/{token}/"
         abslink = f"https://{frontend_site}{relative_link}"
         print(abslink)
