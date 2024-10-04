@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.utils.encoding import force_str, smart_bytes, smart_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from rest_framework import serializers,status
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed,ValidationError
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from rest_framework.response import Response
@@ -110,23 +110,23 @@ class PasswordResetRequestSerializer(serializers.Serializer):
     def validate(self, attrs):
 
         email = attrs.get("email")
-        if User.objects.filter(email=email).exists():
-            user = User.objects.get(email=email)
-            uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
-            token = PasswordResetTokenGenerator().make_token(user)
-            frontend_site = "flickz.onrender.com" 
-            relative_link = f"/reset-password-confirm/{uidb64}/{token}/"
-            abslink = f"https://{frontend_site}{relative_link}"
-            print(abslink)
-            email_body = f"Hi {user.first_name} use the link below to reset your password {abslink}"
-            data = {
-                "email_body": email_body,
-                "email_subject": "Reset your Password",
-                "to_email": user.email,
-            }
-            send_normal_email(data)
-        else:
-            return Response({'error':'This Email Doesnt exists'},status=status.HTTP_404_NOT_FOUND)
+        if not User.objects.filter(email=email).exists():
+            raise ValidationError("This Email Doesn't Exist")
+        user = User.objects.get(email=email)
+        uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
+        token = PasswordResetTokenGenerator().make_token(user)
+        frontend_site = "flickz.onrender.com" 
+        relative_link = f"/reset-password-confirm/{uidb64}/{token}/"
+        abslink = f"https://{frontend_site}{relative_link}"
+        print(abslink)
+        email_body = f"Hi {user.first_name} use the link below to reset your password {abslink}"
+        data = {
+            "email_body": email_body,
+            "email_subject": "Reset your Password",
+            "to_email": user.email,
+        }
+        send_normal_email(data)
+        
 
         return super().validate(attrs)
 
@@ -206,7 +206,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "is_mobile_verified",
         ]
 
-    
 
 class MobileVerificaitonSerializer(serializers.ModelSerializer):
     class Meta:
