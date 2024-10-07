@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import HomeMovieListView , MovieDetailsView , MovieSearchView ,ReviewCreateView
+from .views import HomeMovieListView , MovieDetailsView , MovieSearchView 
 
 
 urlpatterns = [
