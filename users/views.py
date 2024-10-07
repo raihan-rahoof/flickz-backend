@@ -64,7 +64,8 @@ class ReviewCreateView(APIView):
             raise ValidationError("You can only write review after watching the movie")
 
         show = booking.show
-        show_datetime = datetime.combine(show.date, show.end_time)
+        show_datetime = timezone.make_aware(datetime.combine(show.date, show.end_time))
+
 
         if show_datetime < timezone.now():
             raise ValidationError("You can only write review after watching the movie")
