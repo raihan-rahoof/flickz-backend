@@ -13,8 +13,8 @@ from adminside.serializers import MovieSerializer
 from bookings.models import Bookings
 from user_auth.models import User, UserProfile
 
-from .models import Review
-from .serializers import MovieSerializer, ReviewSerializer
+
+from .serializers import MovieSerializer
 from .utils import analyze_sentiment
 from .pagination import MoviePagination
 
