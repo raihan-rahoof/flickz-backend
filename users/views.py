@@ -14,13 +14,9 @@ from bookings.models import Bookings
 from user_auth.models import User, UserProfile
 
 
-from .serializers import MovieSerializer
+from .serializers import MovieSerializer,ReviewSerializer
 from .utils import analyze_sentiment
 from .pagination import MoviePagination
-
-
-
-
 
 
 class HomeMovieListView(ListAPIView):
@@ -44,3 +40,20 @@ class MovieSearchView(APIView):
         return Response([], status=status.HTTP_200_OK)
 
 
+class MovieReviewView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self,request,movie_id):
+        try:
+            movie = Movie.objects.filter(id=movie_id)
+        except Movie.DoesNotExist:
+            return Response({'error':'Movie Doesnt Exist'},status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ReviewSerializer(
+            data={**request.data, "movie": movie.id, "user": request.user.id}
+        )
+        serializer.is_valid(raise_exception=True)
+
+        review = serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
