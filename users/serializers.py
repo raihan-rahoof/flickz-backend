@@ -22,7 +22,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         movie = data.get("movie")
 
         shows = Shows.objects.filter(movie=movie)
-        booking = Bookings.objects.filter(shows__in = shows,user=user,ticket_expiration=True)
+        booking = Bookings.objects.filter(show__in = shows,user=user,ticket_expiration=True)
 
         if not booking.exists():
             raise ValidationError(
