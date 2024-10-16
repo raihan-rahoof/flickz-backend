@@ -19,7 +19,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     def validate(self,data):
         user = self.context['request'].user
-        movie = data.get('moive')
+        movie = data.get("movie")
 
         shows = Shows.objects.filter(movie=movie)
         booking = Bookings.objects.filter(shows__in = shows,user=user,ticket_expiration=True)

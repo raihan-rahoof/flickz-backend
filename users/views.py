@@ -45,12 +45,13 @@ class MovieReviewView(APIView):
 
     def post(self,request,movie_id):
         try:
-            movie = Movie.objects.filter(id=movie_id)
+            movie = Movie.objects.get(id=movie_id)
         except Movie.DoesNotExist:
             return Response({'error':'Movie Doesnt Exist'},status=status.HTTP_404_NOT_FOUND)
 
         serializer = ReviewSerializer(
-            data={**request.data, "movie": movie.id, "user": request.user.id}
+            data={**request.data, "movie": movie.id, "user": request.user.id},
+            context={"request": request}
         )
         serializer.is_valid(raise_exception=True)
 
